@@ -5,21 +5,15 @@ const initialStateLocal = localStorage.getItem("userSliceData");
 const initialState = initialStateLocal
   ? JSON.parse(initialStateLocal)
   : {
-      loginInfo: {
-        username: "Lily Watson",
-        emailOrPhone: "lily.wastons@gmail.com",
-        password: "random-password1234",
-        address: "United State, California",
-        isSignIn: true,
-      },
-      signedUpUsers: [
-        {
-          username: "Lily Watson",
-          emailOrPhone: "lily.wastons@gmail.com",
-          password: "random-password1234",
-        },
-      ],
-    };
+    loginInfo: {
+      username: "",
+      emailOrPhone: "",
+      password: "",
+      address: "",
+      isSignIn: false,
+    },
+    signedUpUsers: [],
+  };
 
 const userSlice = createSlice({
   initialState,
@@ -30,7 +24,11 @@ const userSlice = createSlice({
       state.loginInfo.isSignIn = true;
     },
     setLoginData: (state, { payload }) => {
-      state.loginInfo = { ...payload };
+      const mappedData = { ...payload };
+      if (!mappedData.emailOrPhone && mappedData.email) {
+        mappedData.emailOrPhone = mappedData.email;
+      }
+      state.loginInfo = mappedData;
       state.loginInfo.isSignIn = true;
     },
     signOut: (state) => {

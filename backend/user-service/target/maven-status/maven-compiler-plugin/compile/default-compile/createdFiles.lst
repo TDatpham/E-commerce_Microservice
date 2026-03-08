@@ -1,0 +1,13 @@
+com\electronics\user\model\User.class
+com\electronics\user\service\KafkaConsumerService.class
+com\electronics\user\service\GoogleAuthService.class
+com\electronics\user\config\SecurityConfig.class
+com\electronics\user\controller\UserController.class
+com\electronics\user\service\OtpService.class
+com\electronics\user\service\UserService.class
+com\electronics\user\UserServiceApplication.class
+com\electronics\user\UserDataInitializer.class
+com\electronics\user\repository\OtpRepository.class
+com\electronics\user\model\Otp.class
+com\electronics\user\repository\UserRepository.class
+com\electronics\user\model\Otp$OtpBuilder.class

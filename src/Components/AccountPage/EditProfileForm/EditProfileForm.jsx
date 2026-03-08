@@ -32,7 +32,7 @@ const EditProfileForm = () => {
     });
     checkEmailValidation(emailInput);
     checkPasswordInputs(passwordInputs, loginInfo.password);
-    updateUserInfo(formRef, dispatch, t);
+    updateUserInfo(formRef, dispatch, t, loginInfo);
   }
 
   return (
@@ -50,7 +50,9 @@ const EditProfileForm = () => {
 };
 export default EditProfileForm;
 
-function updateUserInfo(formRef, dispatch, t) {
+import { authApi } from "src/Services/api";
+
+async function updateUserInfo(formRef, dispatch, t, loginInfo) {
   const formEle = formRef.current;
   const inputs = formEle.querySelectorAll("input");
   const isFormValid = checkAreInputsValid(inputs);
@@ -58,16 +60,20 @@ function updateUserInfo(formRef, dispatch, t) {
   if (!isFormValid) return;
 
   const updatedUserData = {
-    username: `${inputs[0].value} ${inputs[1].value}`,
-    emailOrPhone: inputs[2].value,
+    fullName: `${inputs[0].value} ${inputs[1].value}`,
+    email: inputs[2].value,
     address: inputs[3].value,
-    password: inputs[5].value,
+    // Note: Password update logic might need more handling on server
   };
 
-  if (updatedUserData.password === "") delete updatedUserData.password;
-
-  dispatch(updateUserData({ updatedUserData }));
-  updateUserInfoAlert(dispatch, t);
+  try {
+    const response = await authApi.updateUser(loginInfo.id || 1, updatedUserData);
+    dispatch(updateUserData({ updatedUserData: response.data }));
+    updateUserInfoAlert(dispatch, t);
+  } catch (error) {
+    console.error("Update failed:", error);
+    dispatch(showAlert({ alertText: "Failed to update profile", alertState: "error", alertType: "alert" }));
+  }
 }
 
 function updateUserInfoAlert(dispatch, t) {

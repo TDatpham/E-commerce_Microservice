@@ -5,6 +5,7 @@ import AddToCartButton from "./AddToCartButton/AddToCartButton";
 import s from "./ProductCard.module.scss";
 import ProductCardIcons from "./ProductCardIcons/ProductCardIcons";
 import ProductCardInfo from "./ProductCardInfo/ProductCardInfo";
+import { getProductImage } from "src/Functions/imageHelper";
 
 const ProductCard = ({
   product,
@@ -60,7 +61,7 @@ const ProductCard = ({
       <div className={s.productImg}>
         <div className={s.imgHolder}>
           <img
-            src={img}
+            src={getProductImage(img)}
             alt={name}
             aria-label={name}
             loading={loading}

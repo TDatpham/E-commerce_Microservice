@@ -9,6 +9,7 @@ import { searchByObjectKey } from "src/Functions/helper";
 import SvgIcon from "../../MiniComponents/SvgIcon";
 import SearchInput from "./SearchInput";
 import s from "./SearchProductsInput.module.scss";
+import useFetchProducts from "src/Hooks/App/useFetchProducts";
 
 const SearchProductsInput = () => {
   const { t } = useTranslation();
@@ -18,29 +19,32 @@ const SearchProductsInput = () => {
   const location = useLocation();
   const pathName = location.pathname;
   const [searchParams, setSearchParams] = useSearchParams();
+  const { products: backendProducts } = useFetchProducts();
 
   function handleSearchProducts(e) {
-    setSearchParams({ query: searchRef.current });
+    const queryValue = searchRef.current.value || searchRef.current;
+    setSearchParams({ query: queryValue });
     e.preventDefault();
 
-    const isEmptyQuery = searchRef.current?.trim()?.length === 0;
+    const isEmptyQuery = queryValue?.trim()?.length === 0;
     if (isEmptyQuery) return;
 
-    updateSearchProducts();
+    updateSearchProducts(queryValue);
   }
 
-  function updateSearchProducts() {
+  function updateSearchProducts(explicitQuery) {
     dispatch(updateLoadingState({ key: "loadingSearchProducts", value: true }));
 
-    const queryValue = searchRef.current || searchParams.get("query");
-    const isEmptyQuery = queryValue?.trim()?.length === 0;
+    const queryValue = explicitQuery || searchRef.current?.value || searchRef.current || searchParams.get("query");
+    const isEmptyQuery = !queryValue || queryValue?.trim()?.length === 0;
 
     if (isEmptyQuery) {
       dispatch(updateProductsState({ key: "searchProducts", value: [] }));
       return;
     }
 
-    const productsFound = getProducts(queryValue);
+    const allProducts = backendProducts.length > 0 ? backendProducts : productsData;
+    const productsFound = getProducts(queryValue, allProducts);
 
     dispatch(
       updateProductsState({ key: "searchProducts", value: productsFound })
@@ -57,7 +61,7 @@ const SearchProductsInput = () => {
         updateLoadingState({ key: "loadingSearchProducts", value: true })
       );
     };
-  }, []);
+  }, [backendProducts, pathName]);
 
   return (
     <form
@@ -82,16 +86,16 @@ function focusInput(e) {
   searchInput.focus();
 }
 
-function getProducts(query) {
+function getProducts(query, data) {
   let productsFound = searchByObjectKey({
-    data: productsData,
+    data,
     key: "shortName",
     query,
   });
 
   if (productsFound.length === 0) {
     productsFound = searchByObjectKey({
-      data: productsData,
+      data,
       key: "category",
       query,
     });

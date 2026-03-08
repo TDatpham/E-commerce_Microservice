@@ -27,7 +27,10 @@ const Nav = () => {
           {loginInfo.isSignIn ? (
             <NavLink to="/profile">{t("nav.profile")}</NavLink>
           ) : (
-            <NavLink to="/signup">{t("nav.signUp")}</NavLink>
+            <>
+              <NavLink to="/login" style={{ marginRight: '10px' }}>{t("nav.login")}</NavLink>
+              <NavLink to="/signup">{t("nav.signUp")}</NavLink>
+            </>
           )}
         </li>
       </ul>

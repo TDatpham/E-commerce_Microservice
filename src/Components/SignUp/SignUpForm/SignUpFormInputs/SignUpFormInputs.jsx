@@ -7,7 +7,7 @@ import s from "./SignUpFormInputs.module.scss";
 const SignUpFormInputs = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { username, emailOrPhone, password } = useSelector(
+  const { fullName, emailOrPhone, password } = useSelector(
     (state) => state.forms.signUp
   );
 
@@ -25,8 +25,8 @@ const SignUpFormInputs = () => {
     <div className={s.inputs}>
       <input
         type="text"
-        name="username"
-        value={username}
+        name="fullName"
+        value={fullName}
         placeholder={t("inputsPlaceholders.fullName")}
         onChange={updateInputOnChange}
         required

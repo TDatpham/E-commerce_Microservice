@@ -1,36 +1,29 @@
+import { GoogleLogin } from "@react-oauth/google";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import { googleIcon } from "src/Assets/Images/Images";
-import { DEFAULT_LOGIN_DATA } from "src/Data/globalVariables";
+import { Link } from "react-router-dom";
+import { showAlert } from "src/Features/alertsSlice";
 import { setLoginData } from "src/Features/userSlice";
-import { openSignWithGooglePopUp } from "../../SignUpWithGoogle/SignUpWithGooglePopup";
+import { authApi } from "src/Services/api";
 import { signInAlert } from "../SignUpForm";
 import s from "./SignUpButtons.module.scss";
 
 const SignUpButtons = () => {
   const { t } = useTranslation();
-  const navigateTo = useNavigate();
   const dispatch = useDispatch();
-  let isSignUpWithGooglePressed = false;
 
-  function handleSignUpWithGoogle() {
-    if (isSignUpWithGooglePressed) return;
-    isSignUpWithGooglePressed = true;
-
-    openSignWithGooglePopUp();
-    setDefaultSignUpData();
-    signInAlert(t, dispatch);
-  }
-
-  function setDefaultSignUpData() {
-    setTimeout(() => {
-      navigateTo("/");
-      isSignUpWithGooglePressed = false;
-
-      setTimeout(() => dispatch(setLoginData(DEFAULT_LOGIN_DATA)), 500);
-    }, 2500);
-  }
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      const response = await authApi.googleLogin(credentialResponse.credential);
+      if (response.data) {
+        dispatch(setLoginData(response.data));
+        signInAlert(t, dispatch);
+      }
+    } catch (error) {
+      console.error("Google Sign Up Error:", error);
+      dispatch(showAlert({ alertText: "Google Sign Up Failed", alertState: "error", alertType: "alert" }));
+    }
+  };
 
   return (
     <div className={s.buttons}>
@@ -38,14 +31,13 @@ const SignUpButtons = () => {
         {t("buttons.createAccount")}
       </button>
 
-      <button
-        type="button"
-        className={s.signUpBtn}
-        onClick={handleSignUpWithGoogle}
-      >
-        <img src={googleIcon} alt="Colored Google icon" />
-        <span>{t("buttons.signUpWithGoogle")}</span>
-      </button>
+      <div className={s.googleBtnContainer}>
+        <GoogleLogin
+          onSuccess={handleGoogleSuccess}
+          onError={() => console.log('Google Sign Up Failed')}
+          text="signup_with"
+        />
+      </div>
 
       <p>
         <span>{t("loginSignUpPage.alreadyHaveAcc")}</span>

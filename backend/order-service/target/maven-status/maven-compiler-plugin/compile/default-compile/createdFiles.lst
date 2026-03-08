@@ -1,0 +1,7 @@
+com\electronics\order\service\KafkaProducerService.class
+com\electronics\order\controller\OrderController.class
+com\electronics\order\OrderServiceApplication.class
+com\electronics\order\model\Order.class
+com\electronics\order\service\OrderService.class
+com\electronics\order\model\OrderItem.class
+com\electronics\order\repository\OrderRepository.class

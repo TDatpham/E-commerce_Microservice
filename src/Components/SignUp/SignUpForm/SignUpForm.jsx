@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { showAlert } from "src/Features/alertsSlice";
 import { newSignUp, setLoginData } from "src/Features/userSlice";
+import { authApi } from "src/Services/api";
 import { simpleValidationCheck } from "src/Functions/componentsFunctions";
 import {
   compareDataToObjValue,
@@ -18,7 +19,7 @@ const SignUpForm = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  function signUp(e) {
+  async function signUp(e) {
     e.preventDefault();
 
     const inputs = e.target.querySelectorAll("input");
@@ -31,27 +32,27 @@ const SignUpForm = () => {
     const isFormValid = simpleValidationCheck(inputs);
 
     if (isFormValid) {
-      const isUserAlreadySignedUp = compareDataToObjValue(
-        signedUpUsers,
-        formData,
-        "emailOrPhone"
-      );
-      if (isUserAlreadySignedUp) return;
-
-      const uniqueSignedUpUsers = getUniqueArrayByObjectKey({
-        arr: signedUpUsers,
-        newArr: [formData],
-        key: "emailOrPhone",
-      });
-
       if (!isWebsiteOnline) {
         internetConnectionAlert();
         return;
       }
 
-      dispatch(newSignUp(uniqueSignedUpUsers));
-      dispatch(setLoginData(formData));
-      signInAlert(t, dispatch);
+      try {
+        const userData = {
+          username: formData.emailOrPhone, // Use email as username
+          email: formData.emailOrPhone,
+          password: formData.password,
+          fullName: formData.fullName || formData.name || ""
+        };
+        const response = await authApi.register(userData);
+        if (response.data) {
+          dispatch(setLoginData(response.data));
+          signInAlert(t, dispatch);
+        }
+      } catch (error) {
+        console.error("Registration failed:", error);
+        internetConnectionAlert(); // reuse error alert
+      }
     }
   }
 

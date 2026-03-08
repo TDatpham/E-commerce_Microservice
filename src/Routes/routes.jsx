@@ -14,6 +14,7 @@ import ProductsPage from "../Components/ProductsPage/ProductsPage";
 import SearchPage from "../Components/Search/SearchPage";
 import SignUp from "../Components/SignUp/SignUp";
 import WishList from "../Components/WishList/WishList";
+import AdminDashboard from "../Components/Admin/AdminDashboard";
 
 export const ROUTES_CONFIG = [
   { path: "/", element: <Home /> },
@@ -31,5 +32,6 @@ export const ROUTES_CONFIG = [
   { path: "/login", element: <LogIn /> },
   { path: "/profile", element: <AccountPage /> },
   { path: "/search", element: <SearchPage /> },
+  { path: "/admin", element: <AdminDashboard /> },
   { path: "*", element: <NotFoundPage /> },
 ];

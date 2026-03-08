@@ -23,25 +23,14 @@
   }
 }
 
-.signUpBtn {
-  width: 100%;
-  padding: 16px;
-  border-radius: 4px;
-  color: var(--black);
+.googleBtnContainer {
+  margin-top: 10px;
   display: flex;
-  align-items: center;
   justify-content: center;
-  background-color: transparent;
-  border: 2px solid #00000066;
-  height: 57.6px;
-  transition: border-color .2s;
+  width: 100%;
 
-  &:hover {
-    border-color: var(--dark-gray);
-  }
-
-  &:focus-visible {
-    background-color: #4486db1d;
+  &>div {
+    width: 100% !important;
   }
 }
 

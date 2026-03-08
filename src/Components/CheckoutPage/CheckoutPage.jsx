@@ -2,6 +2,8 @@ import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { showAlert } from "src/Features/alertsSlice";
+import { orderApi } from "src/Services/api";
+import { store } from "src/App/store";
 import { transferProducts } from "src/Features/productsSlice";
 import {
   blurInputs,
@@ -45,7 +47,7 @@ const CheckoutPage = () => {
     },
   ];
 
-  function handleSubmitPayment(event) {
+  async function handleSubmitPayment(event) {
     const isCheckboxFocused = document.activeElement.id === "save-info";
     const isInputFocused = document.activeElement.tagName === "INPUT";
     const inputs = event.target.querySelectorAll("input");
@@ -65,7 +67,31 @@ const CheckoutPage = () => {
       return;
     }
 
-    finalizeOrder(dispatch, t);
+    try {
+      const { loginInfo } = store.getState().user; // Get userID from store
+      const orderData = {
+        userId: loginInfo?.id || 1, // Fallback to 1 for demo
+        totalAmount: cartProducts.reduce((acc, p) => {
+          const price = typeof p.afterDiscount === 'string'
+            ? parseFloat(p.afterDiscount.replaceAll(",", ""))
+            : p.afterDiscount;
+          return acc + (price * p.quantity);
+        }, 0),
+        items: cartProducts.map(p => ({
+          productId: p.id,
+          quantity: p.quantity,
+          price: typeof p.afterDiscount === 'string'
+            ? parseFloat(p.afterDiscount.replaceAll(",", ""))
+            : p.afterDiscount
+        }))
+      };
+
+      await orderApi.create(orderData);
+      finalizeOrder(dispatch, t);
+    } catch (error) {
+      console.error("Order failed:", error);
+      dispatch(showAlert({ alertText: "Failed to place order", alertState: "error", alertType: "alert" }));
+    }
   }
 
   return (

@@ -1,7 +1,8 @@
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
 import { updateProductsState } from "src/Features/productsSlice";
+import { updateGlobalState } from "src/Features/globalSlice";
+import { getProductImage } from "src/Functions/imageHelper";
 import useOnlineStatus from "src/Hooks/Helper/useOnlineStatus";
 import SkeletonProductDetails from "../../Shared/SkeletonLoaders/DetailsPage/SkeletonProductDetails";
 import ProductPreview from "../ProductPreview/ProductPreview";
@@ -13,8 +14,7 @@ import ProductFirstInfos from "./ProductFirstInfos/ProductFirstInfos";
 import ProductSizes from "./ProductSizes/ProductSizes";
 
 const ProductDetails = ({ productData }) => {
-  if (!productData) return <Navigate to="product-not-found" />;
-
+  // All hooks must be called unconditionally — BEFORE any early return
   const { loadingProductDetails } = useSelector((state) => state.loading);
   const { previewImg, isZoomInPreviewActive } = useSelector(
     (state) => state.global
@@ -24,24 +24,29 @@ const ProductDetails = ({ productData }) => {
   const isWebsiteOnline = useOnlineStatus();
   const activeClass = isZoomInPreviewActive ? s.active : "";
 
+  useEffect(() => {
+    if (!productData) return;
+    dispatch(
+      updateProductsState({ key: "selectedProduct", value: productData })
+    );
+    const initialImg = getProductImage(productData?.img);
+    dispatch(updateGlobalState({ key: "previewImg", value: initialImg }));
+  }, [productData]);
+
+  // Early return AFTER hooks
+  if (!productData) return null;
+
   function handleZoomInEffect(e) {
     const imgRect = e.target.getClientRects()[0];
     const xPosition = e.clientX - imgRect.left;
     const yPosition = e.clientY - imgRect.top;
     const positions = `-${xPosition * 2}px, -${yPosition * 2}px`;
-
     zoomInImgRef.current.style.transform = `translate(${positions})`;
   }
 
-  useEffect(() => {
-    dispatch(
-      updateProductsState({ key: "selectedProduct", value: productData })
-    );
-  }, []);
-
   return (
     <>
-      {!loadingProductDetails && isWebsiteOnline && (
+      {!loadingProductDetails && (
         <section className={s.detailsSection} id="details-section">
           <ProductPreview
             productData={productData}
@@ -54,20 +59,18 @@ const ProductDetails = ({ productData }) => {
             </div>
 
             <ProductFirstInfos productData={productData} />
-
             <div className={s.horizontalLine} />
-
             <ProductColorsSection productData={productData} />
-            {productData?.sizes && <ProductSizes productData={productData} />}
+            {productData?.sizes && productData.sizes.length > 0 && (
+              <ProductSizes productData={productData} />
+            )}
             <ProductDealingControls productData={productData} />
             <ProductFeatures />
           </section>
         </section>
       )}
 
-      {(loadingProductDetails || !isWebsiteOnline) && (
-        <SkeletonProductDetails />
-      )}
+      {loadingProductDetails && <SkeletonProductDetails />}
     </>
   );
 };

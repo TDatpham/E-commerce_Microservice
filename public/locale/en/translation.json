@@ -3,7 +3,6 @@
     "saleMessage": "Summer Sale For All Swim Suits And Free Express Delivery - OFF 50%!",
     "shopNow": "Shop Now"
   },
-
   "languageSelector": {
     "english": "English",
     "russian": "Russian",
@@ -13,25 +12,22 @@
     "hungarian": "Hungarian",
     "hindi": "Hindi"
   },
-
   "nav": {
     "home": "Home",
     "contact": "Contact",
     "about": "About",
     "profile": "Profile",
-    "signUp": "Sign Up"
+    "signUp": "Sign Up",
+    "login": "Log In"
   },
-
   "navTools": {
     "favorite": "Favorites",
     "cart": "Cart",
     "userMenu": "User menu"
   },
-
   "homeSlider": {
     "title": "Up to 30% off Voucher"
   },
-
   "products": {
     "PS5Gamepad": {
       "shortName": "PS5 Gamepad",
@@ -130,7 +126,6 @@
       "description": "Elevate your outerwear collection with the Quilted Satin Jacket. Crafted from premium satin fabric and featuring a quilted design, this jacket combines style and functionality with ease. Whether you're braving the elements or hitting the town, its luxurious texture and sleek silhouette make it a versatile addition to any wardrobe. Say goodbye to boring outerwear and hello to effortless style with the Quilted Satin Jacket."
     }
   },
-
   "productCard": {
     "buttonText": {
       "addToCart": "Add to cart",
@@ -143,7 +138,6 @@
       "favorite": "Favorite"
     }
   },
-
   "detailsPage": {
     "productRate": "Product rate is {{rate}} of 5 stars",
     "reviews": "({{votes}} Reviews)",
@@ -161,7 +155,6 @@
     },
     "relatedItems": "Related Items"
   },
-
   "common": {
     "facebook": "Facebook",
     "twitter": "Twitter",
@@ -180,7 +173,6 @@
     "backTo": "Back to",
     "home": "Home page"
   },
-
   "history": {
     "account": "Account",
     "products": "Products",
@@ -190,7 +182,6 @@
     "404Error": "404 Error",
     "orders": "orders"
   },
-
   "footer": {
     "section1": {
       "subscribe": "Subscribe",
@@ -227,7 +218,6 @@
       "codedBy": "and coded by"
     }
   },
-
   "sectionsMenu": {
     "title": "Explore Our Collections",
     "womenFashion": {
@@ -260,7 +250,6 @@
       "healthBeauty": "Health & Beauty"
     }
   },
-
   "mobileNav": {
     "profile": "Profile",
     "home": "Home",
@@ -273,7 +262,6 @@
     "signOut": "Sign Out",
     "hey": "Hey"
   },
-
   "buttons": {
     "viewAllProducts": "View All Products",
     "buyNow": "Buy Now",
@@ -294,7 +282,6 @@
     "confirmReceiveAll": "Confirm receive all",
     "cancelAll": "Cancel all"
   },
-
   "aboutPage": {
     "heroSection": {
       "heading": "Our Story",
@@ -340,7 +327,6 @@
       }
     }
   },
-
   "sectionTitles": {
     "todaysSection": {
       "title": "Today's",
@@ -364,7 +350,6 @@
     },
     "forYou": "Just For You"
   },
-
   "categoriesData": {
     "phones": "Phones",
     "gaming": "Gaming",
@@ -378,19 +363,16 @@
     "computers": "Computers",
     "makeup": "Makeup"
   },
-
   "productPoster": {
     "title": "Categories",
     "subTitle": "Enhance Your Music Experience"
   },
-
   "notFoundPage": {
     "tabTitle": "Page Not Found",
     "description": "Your visited page was not found. You may go to the home page.",
     "notBuiltTabTitle": "Page Not Built",
     "notBuiltDescription": "Sorry, the page you're looking for is not built yet."
   },
-
   "featuredSection": {
     "mediumPoster": {
       "title": "PlayStation 5",
@@ -409,7 +391,6 @@
       "description": "GUCCI INTENSE OUD EDP"
     }
   },
-
   "tooltips": {
     "scrollToTop": "Scroll to top",
     "repoStarsForks": "website's repository",
@@ -418,7 +399,6 @@
     "confirm": "Confirm",
     "hidePermanent": "Permanently hide this button."
   },
-
   "inputsPlaceholders": {
     "whatYouLookingFor": "What are you looking for?",
     "enterYourEmail": "Enter your email",
@@ -435,7 +415,6 @@
     "emailOrPhone": "Email or Phone Number",
     "password": "Password"
   },
-
   "inputsLabels": {
     "firstName": "First Name",
     "lastName": "Last Name",
@@ -450,25 +429,21 @@
     "passwordChanges": "Password changes",
     "address": "Address"
   },
-
   "loginSignUpPage": {
     "createAccount": "Create an account",
     "enterDetails": "Enter your details below",
     "login": "Log in to Exclusive",
     "forgotPassword": "Forgot password?",
     "alreadyHaveAcc": "Already have an account?",
-    "dontHaveAcc" :"don't you have an account? "
+    "dontHaveAcc": "don't you have an account? "
   },
-
   "favoritePage": {
     "title": "Favorites ({{numberOfProducts}})"
   },
-
   "connectionLabel": {
     "restoredInternet": "The connection has been restored",
     "noInternetAvailable": "No internet connection available."
   },
-
   "contactPage": {
     "contactInfoCard": {
       "phoneSection": {
@@ -484,7 +459,6 @@
       }
     }
   },
-
   "accountPage": {
     "editProfile": "Edit Your Profile",
     "accountMenuSection": {
@@ -497,7 +471,6 @@
       "cancellations": "My Cancellations"
     }
   },
-
   "cartPage": {
     "productsTable": {
       "product": "Product",
@@ -514,11 +487,9 @@
       "processToCheckout": "Proceed to Checkout"
     }
   },
-
   "checkoutPage": {
     "hasNoProducts": "Your cart is currently empty."
   },
-
   "userMenuItems": {
     "profile": "Manage My Account",
     "cart": "My Order",
@@ -527,7 +498,6 @@
     "wishlist": "Wishlist",
     "logout": "Logout"
   },
-
   "toastAlert": {
     "accountInfoUpdated": "Account's information updated.",
     "messageSent": "Thank you for your message!, we will get back to you shortly.",
@@ -551,11 +521,10 @@
     "cancelAllOrder": "Are you sure you want to cancel all orders?",
     "checkoutSuccess": "Thank you for your order! We'll start processing it right away."
   },
-
   "wishlist": "Wishlist ({{numberOfWishlist}})",
   "cashOnDelivery": "Cash on Delivery",
   "bank": "Bank",
   "billingDetails": "Billing Details",
   "skipToContent": "Skip to Content",
-  "whatImWorking" :"What i'm working on?"
+  "whatImWorking": "What i'm working on?"
 }

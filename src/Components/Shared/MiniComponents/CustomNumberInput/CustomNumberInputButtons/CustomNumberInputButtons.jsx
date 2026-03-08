@@ -37,7 +37,7 @@ const CustomNumberInputButtons = ({ product, quantity }) => {
         onClick={() => handleUpdateQuantity("decrease")}
         tabIndex="-1"
       >
-        <SvgIcon name="arrowUp" />
+        <SvgIcon name="arrowDown" />
       </button>
     </div>
   );

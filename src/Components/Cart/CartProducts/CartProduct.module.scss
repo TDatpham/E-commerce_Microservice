@@ -45,3 +45,25 @@
   width: 54px;
   margin-inline-end: 20px;
 }
+
+.productInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.removeBtnText {
+  background: none;
+  border: none;
+  color: #db4444; // tomato/red
+  font-size: 13px;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  width: fit-content;
+
+  &:hover {
+    text-decoration: underline;
+    color: #ff0000;
+  }
+}

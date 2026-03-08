@@ -4,9 +4,11 @@ import { Navigate, useLocation } from "react-router-dom";
 import { pagesRequireSignIn } from "../Data/globalVariables";
 import { showAlert } from "../Features/alertsSlice";
 
+const ADMIN_PAGES = ["/admin"];
+
 const RequiredAuth = ({ children }) => {
   const { loginInfo } = useSelector((state) => state.user);
-  const { isSignIn } = loginInfo;
+  const { isSignIn, role } = loginInfo;
   const location = useLocation();
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -16,10 +18,27 @@ const RequiredAuth = ({ children }) => {
   const isPageRequiringSignIn = (page) =>
     pagesRequireSignIn.includes(page) && !isSignIn;
 
+  const isAdminPage = ADMIN_PAGES.includes(pathName);
+  const isAdmin = role === "ADMIN" || role === "admin";
+
   if (isLoginOrSignUpPage && isSignIn) return <Navigate to="/" />;
   if (isPageRequiringSignIn(pathName)) {
     loginFirstAlert();
-    return <Navigate to="/signup" />;
+    return <Navigate to="/login" />;
+  }
+  if (isAdminPage && (!isSignIn || !isAdmin)) {
+    setTimeout(
+      () =>
+        dispatch(
+          showAlert({
+            alertText: "Access denied. Admin only.",
+            alertState: "error",
+            alertType: "alert",
+          })
+        ),
+      300
+    );
+    return <Navigate to="/" />;
   }
 
   function loginFirstAlert() {

@@ -31,6 +31,39 @@
   }
 }
 
+.googleBtnContainer {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.otpToggle {
+  cursor: pointer;
+  color: var(--dark-tomato);
+  font-size: 0.9rem;
+  margin-top: 10px;
+  text-decoration: underline;
+  display: block;
+  text-align: right;
+}
+
+.otpVerification {
+  margin-top: 20px;
+
+  .otpInput {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+  }
+}
+
 .form>p {
   margin: 20px 0 30px;
 }
@@ -123,6 +156,32 @@
 
 .signUpMessage>a:hover::before {
   border-color: var(--black);
+}
+
+.forgotBtn {
+  background: none;
+  border: none;
+  color: var(--primary);
+  cursor: pointer;
+  font-size: 0.875rem;
+  padding: 0;
+  text-decoration: underline;
+  transition: color 0.2s;
+
+  &:hover {
+    color: var(--dark-tomato);
+  }
+}
+
+.otpHint {
+  font-size: 0.875rem;
+  color: var(--dark-gray);
+  margin-bottom: 12px;
+  line-height: 1.5;
+
+  strong {
+    color: var(--black);
+  }
 }
 
 // Hungarian styles

@@ -10,6 +10,7 @@ const BillingInput = ({ inputData }) => {
     value,
     onChange,
     autoComplete,
+    onKeyDown,
   } = inputData;
 
   const inputAttributes = {
@@ -21,6 +22,7 @@ const BillingInput = ({ inputData }) => {
     "aria-required": required,
     value,
     onChange,
+    onKeyDown,
     autoComplete: autoComplete ? "on" : "off",
   };
 

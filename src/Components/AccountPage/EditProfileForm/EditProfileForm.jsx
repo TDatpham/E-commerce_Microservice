@@ -11,6 +11,7 @@ import {
 } from "src/Functions/helper";
 import EditProfileInputs from "../EditProfileFormInputs/EditProfileInputs";
 import ProfileFormButtons from "../ProfileFormButtons/ProfileFormButtons";
+import { authApi } from "src/Services/api";
 import s from "./EditProfileForm.module.scss";
 
 const EditProfileForm = () => {
@@ -49,8 +50,6 @@ const EditProfileForm = () => {
   );
 };
 export default EditProfileForm;
-
-import { authApi } from "src/Services/api";
 
 async function updateUserInfo(formRef, dispatch, t, loginInfo) {
   const formEle = formRef.current;

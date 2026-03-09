@@ -6,7 +6,9 @@ import s from "./Nav.module.scss";
 const Nav = () => {
   const { t, i18n } = useTranslation();
   const { loginInfo } = useSelector((state) => state.user);
+  const { isSignIn, role } = loginInfo;
   const navDirection = i18n.dir() === "ltr" ? "ltr" : "rtl";
+  const isAdmin = role === "ADMIN" || role === "admin";
 
   return (
     <nav className={s.nav} dir={navDirection}>
@@ -24,11 +26,20 @@ const Nav = () => {
         </li>
 
         <li>
-          {loginInfo.isSignIn ? (
-            <NavLink to="/profile">{t("nav.profile")}</NavLink>
+          {isSignIn ? (
+            <>
+              {isAdmin && (
+                <NavLink to="/admin" style={{ marginRight: "10px" }}>
+                  Admin
+                </NavLink>
+              )}
+              <NavLink to="/profile">{t("nav.profile")}</NavLink>
+            </>
           ) : (
             <>
-              <NavLink to="/login" style={{ marginRight: '10px' }}>{t("nav.login")}</NavLink>
+              <NavLink to="/login" style={{ marginRight: "10px" }}>
+                {t("nav.login")}
+              </NavLink>
               <NavLink to="/signup">{t("nav.signUp")}</NavLink>
             </>
           )}

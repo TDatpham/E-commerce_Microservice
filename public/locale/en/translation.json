@@ -153,7 +153,13 @@
       "title": "Return Delivery",
       "description": "Free 30 Days Delivery Returns. Details"
     },
-    "relatedItems": "Related Items"
+    "relatedItems": "Related Items",
+    "reviewsTitle": "Reviews & Comments",
+    "selectStars": "Select rating (stars):",
+    "writeComment": "Write your comment (optional)",
+    "submitReview": "Submit review",
+    "commentsTitle": "Comments",
+    "noCommentsYet": "No comments yet. Be the first to review!"
   },
   "common": {
     "facebook": "Facebook",

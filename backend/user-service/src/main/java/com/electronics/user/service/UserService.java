@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +41,12 @@ public class UserService {
             user.setFullName(updatedUser.getFullName());
             user.setEmail(updatedUser.getEmail());
             user.setAddress(updatedUser.getAddress());
+            if (updatedUser.getRole() != null) {
+                user.setRole(updatedUser.getRole());
+            }
+            if (updatedUser.getUsername() != null) {
+                user.setUsername(updatedUser.getUsername());
+            }
             return userRepository.save(user);
         }).orElseThrow(() -> new RuntimeException("User not found"));
     }
@@ -70,5 +77,15 @@ public class UserService {
             return null;
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
+    }
+
+    /** Admin: list all users. */
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    /** Admin: delete user by id. */
+    public void delete(Long id) {
+        userRepository.deleteById(id);
     }
 }

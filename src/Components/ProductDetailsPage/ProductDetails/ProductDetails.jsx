@@ -12,6 +12,7 @@ import s from "./ProductDetails.module.scss";
 import ProductFeatures from "./ProductFeatures/ProductFeatures";
 import ProductFirstInfos from "./ProductFirstInfos/ProductFirstInfos";
 import ProductSizes from "./ProductSizes/ProductSizes";
+import ProductReviews from "./ProductReviews/ProductReviews";
 
 const ProductDetails = ({ productData }) => {
   // All hooks must be called unconditionally — BEFORE any early return
@@ -24,14 +25,16 @@ const ProductDetails = ({ productData }) => {
   const isWebsiteOnline = useOnlineStatus();
   const activeClass = isZoomInPreviewActive ? s.active : "";
 
+  // Use productData?.id to avoid infinite loop: normalizedProduct is a new object
+  // every parent render, so [productData] would trigger effect repeatedly.
   useEffect(() => {
-    if (!productData) return;
+    if (!productData?.id) return;
     dispatch(
       updateProductsState({ key: "selectedProduct", value: productData })
     );
     const initialImg = getProductImage(productData?.img);
     dispatch(updateGlobalState({ key: "previewImg", value: initialImg }));
-  }, [productData]);
+  }, [productData?.id]);
 
   // Early return AFTER hooks
   if (!productData) return null;
@@ -66,6 +69,7 @@ const ProductDetails = ({ productData }) => {
             )}
             <ProductDealingControls productData={productData} />
             <ProductFeatures />
+            <ProductReviews productData={productData} />
           </section>
         </section>
       )}

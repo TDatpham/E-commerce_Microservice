@@ -2,26 +2,44 @@ import { useEffect, useState } from 'react';
 import { productApi } from '../../Services/api';
 
 const useFetchProducts = () => {
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const fetchAll = async () => {
-            try {
-                const response = await productApi.getAll();
-                setProducts(response.data);
-            } catch (err) {
-                console.error("Error fetching products:", err);
-                setError(err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchAll();
-    }, []);
+  useEffect(() => {
+    const fetchAll = async () => {
+      try {
+        const response = await productApi.getAll();
 
-    return { products, loading, error };
+        // Normalize backend products so they match the existing frontend shape
+        const normalized = (response.data || []).map((p) => {
+          const price = typeof p.price === "number" ? p.price : Number(p.price) || 0;
+          const discount = typeof p.discount === "number" ? p.discount : Number(p.discount) || 0;
+
+          const discountedPrice =
+            discount > 0 ? price - (price * discount) / 100 : price;
+
+          return {
+            ...p,
+            // `afterDiscount` is used heavily in cart, checkout, etc.
+            afterDiscount: discountedPrice.toFixed(2),
+            // Ensure quantity exists for cart calculations
+            quantity: p.quantity || 1,
+          };
+        });
+
+        setProducts(normalized);
+      } catch (err) {
+        console.error("Error fetching products:", err);
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAll();
+  }, []);
+
+  return { products, loading, error };
 };
 
 export default useFetchProducts;

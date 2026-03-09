@@ -53,7 +53,8 @@ const ProductCard = ({
 
   function navigateToProductDetails() {
     if (loadingProductDetails) return;
-    navigateTo(`/details?product=${name.toLowerCase()}`);
+    const encodedName = encodeURIComponent(name.toLowerCase());
+    navigateTo(`/details?product=${encodedName}&id=${id}`);
   }
 
   return (

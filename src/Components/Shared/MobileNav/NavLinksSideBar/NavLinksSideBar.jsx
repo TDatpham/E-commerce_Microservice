@@ -9,7 +9,7 @@ import s from "./NavLinksSideBar.module.scss";
 
 const NavLinksSideBar = () => {
   const {
-    loginInfo: { isSignIn },
+    loginInfo: { isSignIn, role },
   } = useSelector((state) => state.user);
   const { favoritesProducts, orderProducts, cartProducts, wishList } =
     useSelector((state) => state.products);
@@ -18,8 +18,11 @@ const NavLinksSideBar = () => {
   return (
     <nav className={s.navLinks}>
       <ul role="menu">
-        {mobileNavData.map(({ name, link, icon, requiteSignIn }, index) => {
-          const shouldShow = requiteSignIn ? isSignIn : true;
+        {mobileNavData.map(({ name, link, icon, requiteSignIn, requireAdmin }, index) => {
+          const isAdminItem = !!requireAdmin;
+          const isAdmin = role === "ADMIN" || role === "admin";
+          const shouldShowBase = requiteSignIn ? isSignIn : true;
+          const shouldShow = isAdminItem ? shouldShowBase && isAdmin : shouldShowBase;
           const currentPage =
             window.location.pathname === link ? "page" : undefined;
 

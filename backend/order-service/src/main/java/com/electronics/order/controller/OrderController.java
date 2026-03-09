@@ -23,4 +23,16 @@ public class OrderController {
     public List<Order> getOrdersByUser(@PathVariable Long userId) {
         return orderService.getOrdersByUserId(userId);
     }
+
+    /** Admin: list all orders. */
+    @GetMapping
+    public List<Order> getAllOrders() {
+        return orderService.getAllOrders();
+    }
+
+    /** Admin: update order status (e.g., PENDING, SHIPPED, DELIVERED). */
+    @PutMapping("/{id}/status")
+    public ResponseEntity<Order> updateOrderStatus(@PathVariable Long id, @RequestParam String status) {
+        return ResponseEntity.ok(orderService.updateStatus(id, status));
+    }
 }

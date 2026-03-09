@@ -1,6 +1,7 @@
 package com.electronics.product.controller;
 
 import com.electronics.product.model.Product;
+import com.electronics.product.model.Category;
 import com.electronics.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -49,6 +50,28 @@ public class ProductController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // Categories CRUD
+    @GetMapping("/categories")
+    public java.util.List<Category> getAllCategories() {
+        return productService.getAllCategories();
+    }
+
+    @PostMapping("/categories")
+    public Category createCategory(@RequestBody Category category) {
+        return productService.createCategory(category);
+    }
+
+    @PutMapping("/categories/{id}")
+    public ResponseEntity<Category> updateCategory(@PathVariable Long id, @RequestBody Category category) {
+        return ResponseEntity.ok(productService.updateCategory(id, category));
+    }
+
+    @DeleteMapping("/categories/{id}")
+    public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
+        productService.deleteCategory(id);
         return ResponseEntity.noContent().build();
     }
 }

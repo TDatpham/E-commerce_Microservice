@@ -1,0 +1,149 @@
+.reviewsSection {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--very-light-gray, #eee);
+}
+
+.title {
+  font-size: 1.25rem;
+  margin-bottom: 6px;
+}
+
+.summary {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 16px;
+}
+
+.starRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.starLabel {
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.stars {
+  display: flex;
+  gap: 4px;
+}
+
+.starBtn {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-size: 24px;
+  color: #ccc;
+  padding: 2px;
+  transition: color 0.15s, transform 0.1s;
+
+  &[data-active="true"] {
+    color: #ffad33;
+  }
+
+  &:hover {
+    transform: scale(1.15);
+  }
+}
+
+.starHint {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.textarea {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 0.95rem;
+
+  &:focus {
+    outline: none;
+    border-color: var(--dark-tomato, #db4444);
+  }
+}
+
+.submitBtn {
+  align-self: flex-start;
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: none;
+  background-color: var(--dark-tomato, #db4444);
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+.commentsList {
+  margin-top: 20px;
+}
+
+.commentsTitle {
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+}
+
+.noComments {
+  font-size: 0.9rem;
+  color: #888;
+}
+
+.comments {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.commentItem {
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.commentStars {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 6px;
+}
+
+.commentStar {
+  font-size: 14px;
+  color: #ccc;
+
+  &[data-filled="true"] {
+    color: #ffad33;
+  }
+}
+
+.commentText {
+  margin: 4px 0 6px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.commentDate {
+  font-size: 0.8rem;
+  color: #888;
+}

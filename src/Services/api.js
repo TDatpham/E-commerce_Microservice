@@ -19,10 +19,20 @@ export const productApi = {
   getStats: () => api.get('/products/stats'),
 };
 
+export const categoryApi = {
+  getAll: () => api.get('/products/categories'),
+  create: (category) => api.post('/products/categories', category),
+  update: (id, category) => api.put(`/products/categories/${id}`, category),
+  delete: (id) => api.delete(`/products/categories/${id}`),
+};
+
 export const authApi = {
   login: (credentials) => api.post('/auth/login', credentials),
   register: (userData) => api.post('/auth/register', userData),
   updateUser: (id, userData) => api.put(`/users/${id}`, userData),
+  // Admin: list all users
+  getAllUsers: () => api.get('/users'),
+  deleteUser: (id) => api.delete(`/users/${id}`),
   sendOtp: (email) => api.post(`/auth/send-otp?email=${email}`),
   verifyOtp: (email, code) => api.post(`/auth/verify-otp?email=${email}&code=${code}`),
   googleLogin: (idToken) => api.post('/auth/google', { idToken }),
@@ -33,6 +43,9 @@ export const authApi = {
 export const orderApi = {
   create: (orderData) => api.post('/orders', orderData),
   getByUser: (userId) => api.get(`/orders/user/${userId}`),
+  // Admin: list all orders
+  getAll: () => api.get('/orders'),
+  updateStatus: (id, status) => api.put(`/orders/${id}/status?status=${encodeURIComponent(status)}`),
 };
 
 export default api;

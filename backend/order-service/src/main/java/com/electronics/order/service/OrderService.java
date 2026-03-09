@@ -32,4 +32,19 @@ public class OrderService {
     public List<Order> getOrdersByUserId(Long userId) {
         return orderRepository.findByUserId(userId);
     }
+
+    /** Admin: fetch all orders in the system. */
+    public List<Order> getAllOrders() {
+        return orderRepository.findAll();
+    }
+
+    /** Admin: update the status of an order. */
+    public Order updateStatus(Long id, String status) {
+        return orderRepository.findById(id)
+                .map(order -> {
+                    order.setStatus(status);
+                    return orderRepository.save(order);
+                })
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+    }
 }

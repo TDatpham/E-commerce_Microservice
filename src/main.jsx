@@ -2,7 +2,7 @@ import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { HelmetProvider } from "react-helmet-async";
 import { Provider } from "react-redux";
-import * as servicerWorker from "../public/register-pwa.js";
+import * as servicerWorker from "./register-pwa.js";
 import App from "./App.jsx";
 import { store } from "./App/store.jsx";
 import { GoogleOAuthProvider } from "@react-oauth/google";

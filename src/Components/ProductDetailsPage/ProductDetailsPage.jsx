@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
 import { SIMPLE_DELAYS } from "src/Data/globalVariables";
@@ -15,6 +16,7 @@ import useFetchProducts from "src/Hooks/App/useFetchProducts";
 const ProductDetailsPage = () => {
   const { t } = useTranslation();
   const PRODUCT_NAME = useGetSearchParam("product");
+  const PRODUCT_ID = useGetSearchParam("id");
   const { products: backendProducts, loading } = useFetchProducts();
 
   // All hooks must be called unconditionally at the top
@@ -22,7 +24,7 @@ const ProductDetailsPage = () => {
     loadingKey: "loadingProductDetails",
     actionMethod: updateLoadingState,
     delays: SIMPLE_DELAYS,
-    dependencies: [PRODUCT_NAME],
+    dependencies: [PRODUCT_NAME, PRODUCT_ID],
   });
   useScrollOnMount(200);
 
@@ -30,27 +32,36 @@ const ProductDetailsPage = () => {
   const allProducts =
     !loading && backendProducts.length > 0 ? backendProducts : productsData;
 
-  const PRODUCT_DATA = allProducts.find(
-    (product) =>
-      product?.name?.toLowerCase() === PRODUCT_NAME?.toLowerCase() ||
-      product?.shortName?.toLowerCase() === PRODUCT_NAME?.toLowerCase()
-  );
+  const PRODUCT_DATA = allProducts.find((product) => {
+    if (PRODUCT_ID && String(product?.id) === String(PRODUCT_ID)) return true;
+    if (!PRODUCT_NAME) return false;
+    const name = product?.name || "";
+    const shortName = product?.shortName || "";
+    return (
+      name.toLowerCase() === PRODUCT_NAME.toLowerCase() ||
+      shortName.toLowerCase() === PRODUCT_NAME.toLowerCase()
+    );
+  });
 
-  // Normalize the product to ensure all required fields exist
-  const normalizedProduct = PRODUCT_DATA
-    ? {
-      ...PRODUCT_DATA,
-      shortName: PRODUCT_DATA.shortName || PRODUCT_DATA.name,
-      otherImages: PRODUCT_DATA.otherImages?.length > 0
-        ? PRODUCT_DATA.otherImages
-        : [PRODUCT_DATA.img],
-      colors: Array.isArray(PRODUCT_DATA.colors) ? PRODUCT_DATA.colors : [],
-      sizes: Array.isArray(PRODUCT_DATA.sizes) ? PRODUCT_DATA.sizes : [],
-      rate: PRODUCT_DATA.rate || 0,
-      votes: PRODUCT_DATA.votes || 0,
-      quantity: PRODUCT_DATA.quantity || 1,
-    }
-    : null;
+  // Memoize to avoid new object reference on every render (prevents infinite loop in ProductDetails useEffect)
+  const normalizedProduct = useMemo(
+    () =>
+      PRODUCT_DATA
+        ? {
+          ...PRODUCT_DATA,
+          shortName: PRODUCT_DATA.shortName || PRODUCT_DATA.name,
+          otherImages: PRODUCT_DATA.otherImages?.length > 0
+            ? PRODUCT_DATA.otherImages
+            : [PRODUCT_DATA.img],
+          colors: Array.isArray(PRODUCT_DATA.colors) ? PRODUCT_DATA.colors : [],
+          sizes: Array.isArray(PRODUCT_DATA.sizes) ? PRODUCT_DATA.sizes : [],
+          rate: PRODUCT_DATA.rate || 0,
+          votes: PRODUCT_DATA.votes || 0,
+          quantity: PRODUCT_DATA.quantity || 1,
+        }
+        : null,
+    [PRODUCT_DATA]
+  );
 
   if (loading) {
     return (

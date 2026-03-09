@@ -45,13 +45,34 @@ const LogInForm = () => {
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
-      const response = await authApi.googleLogin(credentialResponse.credential);
+      const idToken = credentialResponse?.credential;
+      if (!idToken) {
+        dispatch(
+          showAlert({
+            alertText: "Google did not return a valid token. Please try again.",
+            alertState: "error",
+            alertType: "alert",
+          })
+        );
+        return;
+      }
+
+      const response = await authApi.googleLogin(idToken);
       if (response.data) {
         dispatch(setLoginData(response.data));
         logInAlert(dispatch, t);
       }
-    } catch {
-      dispatch(showAlert({ alertText: "Google Login Failed", alertState: "error", alertType: "alert" }));
+    } catch (error) {
+      const msg =
+        error?.response?.data ||
+        "Google Login Failed. Please try again later.";
+      dispatch(
+        showAlert({
+          alertText: msg,
+          alertState: "error",
+          alertType: "alert",
+        })
+      );
     }
   };
 
@@ -239,7 +260,15 @@ const LogInForm = () => {
         <div className={s.googleBtnContainer}>
           <GoogleLogin
             onSuccess={handleGoogleSuccess}
-            onError={() => console.log("Login Failed")}
+            onError={() =>
+              dispatch(
+                showAlert({
+                  alertText: "Google Login Failed. Please check your Google account or try again.",
+                  alertState: "error",
+                  alertType: "alert",
+                })
+              )
+            }
           />
         </div>
 

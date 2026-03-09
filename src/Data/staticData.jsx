@@ -304,6 +304,13 @@ export const mobileNavData = [
     icon: "user",
     requiteSignIn: true,
   },
+  {
+    name: "Admin",
+    link: "/admin",
+    icon: "settings",
+    requiteSignIn: true,
+    requireAdmin: true,
+  },
 ];
 
 export const womenFashionMenuItems = [

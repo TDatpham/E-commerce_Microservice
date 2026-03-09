@@ -19,7 +19,7 @@ const RequiredAuth = ({ children }) => {
     pagesRequireSignIn.includes(page) && !isSignIn;
 
   const isAdminPage = ADMIN_PAGES.includes(pathName);
-  const isAdmin = role === "ADMIN" || role === "admin";
+  const isAdmin = role && (role.toUpperCase() === "ADMIN");
 
   if (isLoginOrSignUpPage && isSignIn) return <Navigate to="/" />;
   if (isPageRequiringSignIn(pathName)) {

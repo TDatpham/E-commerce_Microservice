@@ -37,8 +37,8 @@ public class Product {
     @ElementCollection
     private List<String> sizes;
 
-    private Double rate;
-    private Integer votes;
-    private Integer quantity;
-    private Integer sold;
+    private Double rate = 0.0;
+    private Integer votes = 0;
+    private Integer quantity = 1;
+    private Integer sold = 0;
 }

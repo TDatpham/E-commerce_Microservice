@@ -1,6 +1,7 @@
 import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { showAlert } from "src/Features/alertsSlice";
 import { orderApi } from "src/Services/api";
 import { store } from "src/App/store";
@@ -21,6 +22,7 @@ const CheckoutPage = () => {
   useScrollOnMount(160);
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { saveBillingInfoToLocal, cartProducts } = useSelector(
     (state) => state.products
   );
@@ -88,6 +90,8 @@ const CheckoutPage = () => {
 
       await orderApi.create(orderData);
       finalizeOrder(dispatch, t);
+      // Small UX effect: redirect to orders page after success
+      navigate("/order");
     } catch (error) {
       console.error("Order failed:", error);
       dispatch(showAlert({ alertText: "Failed to place order", alertState: "error", alertType: "alert" }));

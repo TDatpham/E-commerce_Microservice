@@ -8,7 +8,7 @@
   Designed by: <a href="https://github.com/TDatpham" target="_blank">Thanh Dat Pham</a>, 
   Design on <a href="https://www.figma.com/file/bwhp2Q5jdzJDIw5YIsBlXe/Full-E-Commerce-Website-UI-UX-Design-(Community)?node-id=34%3A213&mode=design" target="_blank">Figma</a>
 </p>
-
+ 
 ## 1. Installation
 
 **1. Clone the repository:**

@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
+import { isUserAdmin } from "src/Functions/helper";
 import s from "./Nav.module.scss";
 
 const Nav = () => {
@@ -8,7 +9,7 @@ const Nav = () => {
   const { loginInfo } = useSelector((state) => state.user);
   const { isSignIn, role } = loginInfo;
   const navDirection = i18n.dir() === "ltr" ? "ltr" : "rtl";
-  const isAdmin = role === "ADMIN" || role === "admin";
+  const isAdmin = isUserAdmin(role);
 
   return (
     <nav className={s.nav} dir={navDirection}>
@@ -30,7 +31,7 @@ const Nav = () => {
             <>
               {isAdmin && (
                 <NavLink to="/admin" style={{ marginRight: "10px" }}>
-                  Admin
+                  {t("nav.admin")}
                 </NavLink>
               )}
               <NavLink to="/order" style={{ marginRight: "10px" }}>

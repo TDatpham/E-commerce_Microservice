@@ -5,6 +5,7 @@ D:\Personal Project\Electronics-store-website\backend\user-service\src\main\java
 D:\Personal Project\Electronics-store-website\backend\user-service\src\main\java\com\electronics\user\config\JwtAuthenticationFilter.java
 D:\Personal Project\Electronics-store-website\backend\user-service\src\main\java\com\electronics\user\config\SecurityConfig.java
 D:\Personal Project\Electronics-store-website\backend\user-service\src\main\java\com\electronics\user\controller\UserController.java
+D:\Personal Project\Electronics-store-website\backend\user-service\src\main\java\com\electronics\user\config\GlobalExceptionHandler.java
 D:\Personal Project\Electronics-store-website\backend\user-service\src\main\java\com\electronics\user\service\KafkaConsumerService.java
 D:\Personal Project\Electronics-store-website\backend\user-service\src\main\java\com\electronics\user\model\LoginRequest.java
 D:\Personal Project\Electronics-store-website\backend\user-service\src\main\java\com\electronics\user\UserServiceApplication.java

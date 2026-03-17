@@ -106,6 +106,7 @@ const ProductDetailsPage = () => {
           <RelatedItemsSection
             productType={normalizedProduct.category}
             currentProduct={normalizedProduct}
+            allProducts={allProducts}
           />
         </main>
       </div>

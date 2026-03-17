@@ -4,7 +4,7 @@ import {
   getTimeInMilliseconds,
   getTimeObj,
 } from "src/Functions/helper";
-import useLocalStorage from "../Helper/useLocalStorage";
+import { getLocalStorage, setItemToLocalStorage } from "src/Functions/localStorageFunctions";
 
 /* Props Example
   timeEvent="3 24 60 60" Days-Hours-Minutes-Seconds
@@ -16,59 +16,51 @@ const useTimerDown = (
   { timeResetRequired, stopTimer, timerName, formattedTime }
 ) => {
   if (!timerName) throw new Error("Timer name is invalid");
-  if (timeResetRequired) localStorage.removeItem(timerName);
+  
+  useEffect(() => {
+    if (timeResetRequired) localStorage.removeItem(timerName);
+  }, [timeResetRequired, timerName]);
 
   const times = downTime.split(" ");
-  const timeLocal = useLocalStorage(timerName);
-  const timeOrTimeLocal = timeLocal
-    ? timeLocal
-    : getTimeInMilliseconds(...times);
-  const [time, setTime] = useState(timeOrTimeLocal);
-  const [timeData, setTimeData] = useState(getTimeObj(timeOrTimeLocal));
+  
+  // Initialize state using a lazy initializer to avoid repeated localStorage reads
+  const [time, setTime] = useState(() => {
+    const timeLocal = getLocalStorage(timerName);
+    return timeLocal ? timeLocal : getTimeInMilliseconds(...times);
+  });
+
+  const [timeData, setTimeData] = useState(() => getTimeObj(time));
   const [isTimerDone, setIsTimerDone] = useState(false);
-  const isMounted = useRef(false);
   const debounceId = useRef();
 
-  function useEffectTimeUpdater() {
+  useEffect(() => {
+    if (stopTimer || isTimerDone) {
+      if (debounceId.current) clearTimeout(debounceId.current);
+      return;
+    }
+
     if (time <= -1000) {
       setIsTimerDone(true);
       return;
     }
 
     debounceId.current = setTimeout(() => {
-      setTime(time - 1000);
+      const newTime = time - 1000;
+      setTime(newTime);
+      setItemToLocalStorage(timerName, newTime);
 
+      const timeObj = getTimeObj(newTime);
       if (formattedTime) {
-        setTimeData(getFormattedTime(getTimeObj(time)));
-        useLocalStorage(timerName, time);
-        return;
+        setTimeData(getFormattedTime(timeObj));
+      } else {
+        setTimeData(timeObj);
       }
-
-      setTimeData(getTimeObj(time));
-      useLocalStorage(timerName, time);
     }, 1000);
 
     return () => {
-      clearTimeout(debounceId.current);
+      if (debounceId.current) clearTimeout(debounceId.current);
     };
-  }
-
-  useEffect(() => {
-    if (!isMounted.current) {
-      isMounted.current = true;
-
-      if (formattedTime) {
-        setTimeData(getFormattedTime(getTimeObj(time)));
-        useLocalStorage(timerName, time);
-        useEffectTimeUpdater();
-        return;
-      }
-    }
-
-    if (stopTimer) return;
-
-    useEffectTimeUpdater();
-  }, [time]);
+  }, [time, stopTimer, isTimerDone, timerName, formattedTime]);
 
   return { timeData, isTimerDone };
 };

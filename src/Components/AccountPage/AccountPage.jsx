@@ -33,6 +33,7 @@ const AccountPage = () => {
               {t("common.welcome")}
               {"! "}
               <Link to="/profile">{loginInfo.username}</Link>
+              {loginInfo.role && <span className={s.roleTag}> ({loginInfo.role})</span>}
             </p>
           </div>
 

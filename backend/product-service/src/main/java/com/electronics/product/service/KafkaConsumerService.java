@@ -1,6 +1,5 @@
 package com.electronics.product.service;
 
-import com.electronics.product.repository.ProductRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class KafkaConsumerService {
-    private final ProductRepository productRepository;
     private final ObjectMapper objectMapper;
 
     @org.springframework.transaction.annotation.Transactional
@@ -29,8 +27,8 @@ public class KafkaConsumerService {
                         continue;
 
                     Long productId = productIdNode.asLong();
-                    Integer quantity = quantityNode.asInt();
 
+                    /* Commented out to avoid double reduction (REST call already handles this)
                     productRepository.findById(productId).ifPresentOrElse(product -> {
                         int currentStock = product.getStockQuantity() != null ? product.getStockQuantity() : 50;
                         int currentSold = product.getSold() != null ? product.getSold() : 0;
@@ -40,6 +38,8 @@ public class KafkaConsumerService {
                         System.out.println("Updated product " + productId + ": stock=" + product.getStockQuantity()
                                 + ", sold=" + product.getSold());
                     }, () -> System.err.println("Product not found: " + productId));
+                    */
+                    System.out.println("Kafka event received for product " + productId + " (skipping stock update as REST call handles it)");
                 }
             } else {
                 System.err.println("No items found in order event");

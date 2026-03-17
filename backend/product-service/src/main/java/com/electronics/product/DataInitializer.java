@@ -30,6 +30,7 @@ public class DataInitializer implements CommandLineRunner {
             p1.setVotes(88);
             p1.setSold(105);
             p1.setStockQuantity(100);
+            p1.setStatus("APPROVED");
             p1.setColors(java.util.List.of(
                     new com.electronics.product.model.ProductColor(null, "White", "#FFFFFF"),
                     new com.electronics.product.model.ProductColor(null, "Black", "#000000")));
@@ -48,6 +49,7 @@ public class DataInitializer implements CommandLineRunner {
             p2.setVotes(75);
             p2.setSold(210);
             p2.setStockQuantity(50);
+            p2.setStatus("APPROVED");
             p2.setColors(java.util.List.of(
                     new com.electronics.product.model.ProductColor(null, "RGB", "#FF00FF")));
             productService.saveProduct(p2);
@@ -65,6 +67,7 @@ public class DataInitializer implements CommandLineRunner {
             p3.setVotes(120);
             p3.setSold(50);
             p3.setStockQuantity(30);
+            p3.setStatus("APPROVED");
             p3.setColors(java.util.List.of(
                     new com.electronics.product.model.ProductColor(null, "Purple", "#A590D0"),
                     new com.electronics.product.model.ProductColor(null, "Midnight", "#1A1A1A")));
@@ -83,6 +86,7 @@ public class DataInitializer implements CommandLineRunner {
             p4.setVotes(94);
             p4.setSold(83);
             p4.setStockQuantity(15);
+            p4.setStatus("APPROVED");
             p4.setColors(java.util.List.of(
                     new com.electronics.product.model.ProductColor(null, "Black", "#000000")));
             productService.saveProduct(p4);

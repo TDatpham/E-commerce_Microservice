@@ -1,0 +1,5 @@
+﻿id	name	price	stock_quantity
+1	PS5 Gamepad	69.99	100
+2	AK-900 Wired Keyboard	85	50
+3	Iphone 14 series	999	30
+4	Canon EOS DSLR Camera	6499	15

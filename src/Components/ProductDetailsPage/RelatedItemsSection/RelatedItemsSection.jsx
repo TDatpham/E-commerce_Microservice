@@ -4,14 +4,16 @@ import ProductsSlider from "../../Shared/MidComponents/ProductsSlider/ProductsSl
 import SectionTitle from "../../Shared/MiniComponents/SectionTitle/SectionTitle";
 import s from "./RelatedItemsSection.module.scss";
 
-const RelatedItemsSection = ({ productType, currentProduct }) => {
-  const hasRelatedProducts = getProductsByRelatedType().length > 0;
+const RelatedItemsSection = ({ productType, currentProduct, allProducts }) => {
   const { t } = useTranslation();
+  const relatedProducts = getProductsByRelatedType(allProducts);
+  const hasRelatedProducts = relatedProducts.length > 0;
 
-  function getProductsByRelatedType() {
-    return productsData.filter((product) => {
-      const isSameType = product.category === productType;
-      const isCurrentProduct = product === currentProduct;
+  function getProductsByRelatedType(dataToFilter) {
+    const data = (Array.isArray(dataToFilter) && dataToFilter.length > 0) ? dataToFilter : productsData;
+    return data.filter((product) => {
+      const isSameType = (product.category || "").toLowerCase() === (productType || "").toLowerCase();
+      const isCurrentProduct = String(product.id) === String(currentProduct?.id);
       return isSameType && !isCurrentProduct;
     });
   }

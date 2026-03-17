@@ -5,7 +5,7 @@ import s from "./SignUp.module.scss";
 import SignUpForm from "./SignUpForm/SignUpForm";
 
 const SignUp = () => {
-  useScrollOnMount(260);
+  useScrollOnMount(0);
 
   return (
     <>
@@ -23,7 +23,9 @@ const SignUp = () => {
             <img src={signUpImg} alt="Shopping cart and phone" />
           </div>
 
-          <SignUpForm />
+          <div className={s.formContainer}>
+            <SignUpForm />
+          </div>
         </div>
       </main>
     </>

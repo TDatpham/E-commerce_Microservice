@@ -19,7 +19,7 @@ public class Otp {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String email;
+    private String loginKey;
     private String code;
     private LocalDateTime expiryTime;
 }

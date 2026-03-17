@@ -22,3 +22,27 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Backend
+target/
+*.class
+*.jar
+*.war
+*.ear
+.mvn/
+.metadata/
+bin/
+*.tmp
+*.bak
+*.swp
+*~
+.settings/
+.project
+.classpath
+.factorypath
+
+# Environment
+.env
+.env.local
+.env.*.local
+

@@ -90,6 +90,8 @@ const ProductReviews = ({ productData, onReviewChange }) => {
     }
   };
 
+  const [visibleReviews, setVisibleReviews] = useState(3);
+
   return (
     <section className={s.reviewsSection} aria-label="Product reviews">
       <h3 className={s.title}>{t("detailsPage.reviewsTitle")}</h3>
@@ -154,32 +156,44 @@ const ProductReviews = ({ productData, onReviewChange }) => {
         {reviews.length === 0 ? (
           <p className={s.noComments}>{t("detailsPage.noCommentsYet")}</p>
         ) : (
-          <ul className={s.comments}>
-            {reviews.map((r) => (
-              <li key={r.id} className={s.commentItem}>
-                <div className={s.commentHeader}>
-                  <div className={s.userInfo}>
-                    <span className={s.username}>{r.userName || "Anonymous"}</span>
-                    <div className={s.commentStars}>
-                      {Array.from({ length: MAX_STARS }, (_, j) => (
-                        <span key={j} className={s.commentStar} data-filled={j < r.rating}>★</span>
-                      ))}
+          <>
+            <div className={s.commentsContainer}>
+              <ul className={s.comments}>
+                {reviews.slice(0, visibleReviews).map((r) => (
+                  <li key={r.id} className={s.commentItem}>
+                    <div className={s.commentHeader}>
+                      <div className={s.userInfo}>
+                        <span className={s.username}>{r.userName || "Anonymous"}</span>
+                        <div className={s.commentStars}>
+                          {Array.from({ length: MAX_STARS }, (_, j) => (
+                            <span key={j} className={s.commentStar} data-filled={j < r.rating}>★</span>
+                          ))}
+                        </div>
+                      </div>
+                      {loginInfo?.username === r.userName && (
+                        <div className={s.actions}>
+                          <button onClick={() => handleEdit(r)} className={s.editBtn}>Edit</button>
+                          <button onClick={() => handleDelete(r.id)} className={s.deleteBtn}>Delete</button>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                  {loginInfo?.username === r.userName && (
-                    <div className={s.actions}>
-                      <button onClick={() => handleEdit(r)} className={s.editBtn}>Edit</button>
-                      <button onClick={() => handleDelete(r.id)} className={s.deleteBtn}>Delete</button>
-                    </div>
-                  )}
-                </div>
-                {r.comment && <p className={s.commentText}>{r.comment}</p>}
-                <time className={s.commentDate}>
-                  {r.date ? new Date(r.date).toLocaleDateString() : ""}
-                </time>
-              </li>
-            ))}
-          </ul>
+                    {r.comment && <p className={s.commentText}>{r.comment}</p>}
+                    <time className={s.commentDate}>
+                      {r.date ? new Date(r.date).toLocaleDateString() : ""}
+                    </time>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            {visibleReviews < reviews.length && (
+              <button
+                className={s.loadMoreBtn}
+                onClick={() => setVisibleReviews(prev => prev + 5)}
+              >
+                {t("detailsPage.loadMore") || "Load More Comments"}
+              </button>
+            )}
+          </>
         )}
       </div>
     </section>

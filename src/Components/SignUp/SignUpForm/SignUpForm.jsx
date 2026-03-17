@@ -1,9 +1,12 @@
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { showAlert } from "src/Features/alertsSlice";
 import { newSignUp, setLoginData } from "src/Features/userSlice";
 import { authApi } from "src/Services/api";
 import { simpleValidationCheck } from "src/Functions/componentsFunctions";
+import { loadUserProducts } from "src/Features/productsSlice";
+import { loadUserData } from "src/Functions/userDataStorage";
 import {
   compareDataToObjValue,
   getUniqueArrayByObjectKey,
@@ -18,6 +21,7 @@ const SignUpForm = () => {
   const isWebsiteOnline = useOnlineStatus();
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   async function signUp(e) {
     e.preventDefault();
@@ -38,23 +42,43 @@ const SignUpForm = () => {
       }
 
       try {
+        const identifier = formData.emailOrPhone;
+        const isEmail = identifier.includes("@");
+        
         const userData = {
-          username: formData.emailOrPhone, // Use email as username
-          email: formData.emailOrPhone,
+          username: identifier,
+          email: isEmail ? identifier : null,
+          phone: !isEmail ? identifier : null,
           password: formData.password,
-          fullName: formData.fullName || formData.name || ""
+          fullName: formData.fullName || formData.name || "",
+          role: formData.role || "USER"
         };
+        
         const response = await authApi.register(userData);
         if (response.data) {
-          dispatch(setLoginData(response.data));
+          // The backend returns AuthResponse (tokens + user)
+          handleSuccessLogin(response.data);
           signInAlert(t, dispatch);
+          setTimeout(() => navigate("/"), 2000);
         }
       } catch (error) {
         console.error("Registration failed:", error);
-        internetConnectionAlert(); // reuse error alert
+        const msg = error?.response?.data || "Registration failed. Please check your details.";
+        dispatch(showAlert({ alertText: msg, alertState: "error", alertType: "alert" }));
       }
     }
   }
+
+  const handleSuccessLogin = (data) => {
+    dispatch(setLoginData(data));
+    // Restore user-specific favorites and wishlist if any (usually empty for new users)
+    const userId = data?.user?.id || data?.id;
+    if (userId) {
+      const favoritesProducts = loadUserData("favoritesProducts", userId);
+      const wishList = loadUserData("wishList", userId);
+      dispatch(loadUserProducts({ favoritesProducts, wishList }));
+    }
+  };
 
   function internetConnectionAlert() {
     const alertText = t("toastAlert.loginFailed");
@@ -64,7 +88,7 @@ const SignUpForm = () => {
   }
 
   return (
-    <form action="GET" className={s.form} onSubmit={signUp}>
+    <form action="POST" className={s.form} onSubmit={signUp}>
       <h2>{t("loginSignUpPage.createAccount")}</h2>
       <p>{t("loginSignUpPage.enterDetails")}</p>
 

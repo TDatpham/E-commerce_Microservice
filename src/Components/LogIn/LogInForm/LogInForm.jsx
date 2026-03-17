@@ -2,7 +2,7 @@ import { useState } from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { showAlert } from "src/Features/alertsSlice";
 import { setLoginData } from "src/Features/userSlice";
 import { loadUserProducts } from "src/Features/productsSlice";
@@ -19,6 +19,7 @@ const VIEW = { LOGIN: "login", OTP: "otp", FORGOT: "forgot", RESET: "reset" };
 const LogInForm = () => {
   const { emailOrPhone, password } = useSelector((state) => state.forms.login);
   const [view, setView] = useState(VIEW.LOGIN);
+  const [loading, setLoading] = useState(false);
   const [otpCode, setOtpCode] = useState("");
   const [forgotEmail, setForgotEmail] = useState("");
   const [resetOtp, setResetOtp] = useState("");
@@ -27,69 +28,76 @@ const LogInForm = () => {
   const isWebsiteOnline = useOnlineStatus();
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  async function login(e) {
-    e.preventDefault();
+  async function handleSubmit(e) {
+    if (e) e.preventDefault();
     if (!isWebsiteOnline) { internetConnectionAlert(dispatch, t); return; }
-    const inputs = e.target.querySelectorAll("input");
-    const isFormValid = simpleValidationCheck(inputs);
-    if (!isFormValid) return;
+
+    setLoading(true);
     try {
-      const response = await authApi.login({ username: emailOrPhone, password });
-      if (response.data) {
-        dispatch(setLoginData(response.data));
-        restoreUserProducts(dispatch, response.data);
-        logInAlert(dispatch, t);
+      if (view === VIEW.LOGIN) {
+        const inputs = e.target.querySelectorAll("input");
+        const isFormValid = simpleValidationCheck(inputs);
+        if (!isFormValid) { setLoading(false); return; }
+        
+        const response = await authApi.login({ username: emailOrPhone, password });
+        if (response.data) handleSuccessLogin(response.data);
+      } else if (view === VIEW.OTP) {
+        await verifyLoginOtp();
+      } else if (view === VIEW.FORGOT) {
+        await sendForgotOtp();
+      } else if (view === VIEW.RESET) {
+        await resetPassword();
       }
     } catch (error) {
-      dispatch(showAlert({ alertText: "Invalid email or password", alertState: "error", alertType: "alert" }));
+      let alertText = "Invalid email or password";
+      if (!error.response) {
+        alertText = "Cannot connect to server. Please make sure the backend is running.";
+      } else if (error.response?.data) {
+        alertText = typeof error.response.data === "string" ? error.response.data : "Invalid email or password";
+      }
+      dispatch(showAlert({ alertText, alertState: "error", alertType: "alert" }));
+    } finally {
+      setLoading(false);
     }
   }
+
+  const handleSuccessLogin = (data) => {
+    dispatch(setLoginData(data));
+    restoreUserProducts(dispatch, data);
+    logInAlert(dispatch, t);
+    setTimeout(() => navigate("/"), 1000); // Faster redirect
+  };
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
       const idToken = credentialResponse?.credential;
       if (!idToken) {
-        dispatch(
-          showAlert({
-            alertText: "Google did not return a valid token. Please try again.",
-            alertState: "error",
-            alertType: "alert",
-          })
-        );
+        dispatch(showAlert({ alertText: "Google did not return a valid token.", alertState: "error", alertType: "alert" }));
         return;
       }
 
       const response = await authApi.googleLogin(idToken);
       if (response.data) {
-        dispatch(setLoginData(response.data));
-        restoreUserProducts(dispatch, response.data);
-        logInAlert(dispatch, t);
+        handleSuccessLogin(response.data);
       }
     } catch (error) {
-      const msg =
-        error?.response?.data ||
-        "Google Login Failed. Please try again later.";
-      dispatch(
-        showAlert({
-          alertText: msg,
-          alertState: "error",
-          alertType: "alert",
-        })
-      );
+      const msg = error?.response?.data || "Google Login Failed. Please try again later.";
+      dispatch(showAlert({ alertText: msg, alertState: "error", alertType: "alert" }));
     }
   };
 
   // OTP Login
   const sendLoginOtp = async () => {
-    if (!emailOrPhone?.includes("@")) {
-      dispatch(showAlert({ alertText: "Please enter a valid email address first", alertState: "error", alertType: "alert" }));
+    if (!emailOrPhone) {
+      dispatch(showAlert({ alertText: "Please enter your email, username or phone number first", alertState: "error", alertType: "alert" }));
       return;
     }
     try {
       await authApi.sendOtp(emailOrPhone);
       setView(VIEW.OTP);
-      dispatch(showAlert({ alertText: "OTP sent! Check your email inbox (and Spam folder)", alertState: "success", alertType: "alert" }));
+      dispatch(showAlert({ alertText: "OTP sent! Please check your registered email inbox.", alertState: "success", alertType: "alert" }));
     } catch (error) {
       const msg = error?.response?.data || "Failed to send OTP.";
       dispatch(showAlert({ alertText: msg, alertState: "error", alertType: "alert" }));
@@ -97,13 +105,14 @@ const LogInForm = () => {
   };
 
   const verifyLoginOtp = async () => {
+    if (!otpCode) {
+      dispatch(showAlert({ alertText: "Please enter the OTP code", alertState: "error", alertType: "alert" }));
+      return;
+    }
     try {
       const response = await authApi.verifyOtp(emailOrPhone, otpCode);
       if (response.data) {
-        dispatch(setLoginData(response.data));
-        restoreUserProducts(dispatch, response.data);
-        dispatch(showAlert({ alertText: "Logged in successfully with OTP!", alertState: "success", alertType: "alert" }));
-        setView(VIEW.LOGIN);
+        handleSuccessLogin(response.data);
       }
     } catch {
       dispatch(showAlert({ alertText: "Invalid or expired OTP", alertState: "error", alertType: "alert" }));
@@ -112,14 +121,14 @@ const LogInForm = () => {
 
   // Forgot Password flow
   const sendForgotOtp = async () => {
-    if (!forgotEmail?.includes("@")) {
-      dispatch(showAlert({ alertText: "Please enter a valid email address", alertState: "error", alertType: "alert" }));
+    if (!forgotEmail) {
+      dispatch(showAlert({ alertText: "Please enter your account email, username or phone", alertState: "error", alertType: "alert" }));
       return;
     }
     try {
       await authApi.sendOtp(forgotEmail);
       setView(VIEW.RESET);
-      dispatch(showAlert({ alertText: "OTP sent to your email for password reset", alertState: "success", alertType: "alert" }));
+      dispatch(showAlert({ alertText: "OTP sent! Check your registered email for the reset code.", alertState: "success", alertType: "alert" }));
     } catch (error) {
       const msg = error?.response?.data || "Failed to send OTP.";
       dispatch(showAlert({ alertText: msg, alertState: "error", alertType: "alert" }));
@@ -152,8 +161,8 @@ const LogInForm = () => {
 
   return (
     <div className={s.formContainer}>
-      <form className={s.form} onSubmit={login}>
-        <h2>{t("loginSignUpPage.login")}</h2>
+      <form action="POST" className={s.form} onSubmit={handleSubmit}>
+        <h2>{t("nav.login")}</h2>
         <p>{t("loginSignUpPage.enterDetails")}</p>
 
         {/* ── Normal Login ── */}
@@ -161,8 +170,8 @@ const LogInForm = () => {
           <>
             <LogInFormInputs />
             <div className={s.buttons}>
-              <button type="submit" className={s.loginBtn}>
-                {t("buttons.login")}
+              <button type="submit" className={s.loginBtn} disabled={loading}>
+                {loading ? "Logging in..." : t("buttons.login")}
               </button>
               <button
                 type="button"
@@ -277,10 +286,10 @@ const LogInForm = () => {
           />
         </div>
 
-        <p className={s.signUpMessage}>
+        <div className={s.signUpMessage}>
           <span>{t("loginSignUpPage.dontHaveAcc")}</span>
           <Link to="/signup">{t("nav.signUp")}</Link>
-        </p>
+        </div>
       </form>
     </div>
   );

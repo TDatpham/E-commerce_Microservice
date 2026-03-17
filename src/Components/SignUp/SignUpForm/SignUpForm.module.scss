@@ -1,36 +1,21 @@
 @use "src/Styles/mixins" as m;
 
 .form {
-  max-width: 371px;
-  width: 371px;
-  margin: 0 120px;
-}
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
 
-@include m.medium {
-  .form {
-    margin: 0;
-    width: 100%;
+  h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--black, #1a1a1a);
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
   }
-}
 
-@media (max-width: 500px) {
-  .form {
-    max-width: none;
+  p {
+    font-size: 1.05rem;
+    color: var(--dark-gray, #666);
+    margin-bottom: 36px;
   }
-}
-
-.form>h2 {
-  font: 500 2.25rem/30px "Inter", sans-serif;
-  letter-spacing: .04rem;
-  width: max-content;
-}
-
-@include m.small {
-  .form>h2 {
-    font-size: 1.8rem;
-  }
-}
-
-.form>p {
-  margin: 20px 0 30px;
 }

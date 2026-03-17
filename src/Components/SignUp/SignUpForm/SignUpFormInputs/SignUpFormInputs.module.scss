@@ -1,44 +1,88 @@
 .inputs {
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 20px;
 }
 
 .input {
   position: relative;
+  width: 100%;
 }
 
-.inputs input {
-  border: none;
-  outline: none;
-  border-bottom: solid 1px var(--dark-gray);
-  padding-bottom: 8px;
-  color: var(--black);
-  width: 100%;
-  transition: border-color .1s;
+.roleSelection {
+  margin-top: 15px;
+  text-align: left;
 
-  &:focus {
-    border-block-color: var(--black);
+  p {
+    font-size: 0.95rem;
+    color: var(--dark-gray, #666);
+    margin-bottom: 8px;
+    font-weight: 500;
   }
+
+  .roles {
+    display: flex;
+    gap: 24px;
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      color: var(--black, #1a1a1a);
+
+      input {
+        width: 18px;
+        height: 18px;
+        margin: 0;
+        accent-color: var(--dark-tomato, #db4444);
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+.inputs input:not([type="radio"]) {
+  width: 100%;
+  padding: 16px 20px;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  font-size: 1rem;
+  color: #1a1a1a;
+  transition: all 0.3s ease;
+  outline: none;
 
   &::placeholder {
-    transition: color .1s;
+    color: #adb5bd;
+    transition: color 0.3s;
   }
 
-  &[class=invalid] {
-    border-bottom-color: var(--dark-tomato);
-    color: var(--dark-tomato);
+  &:focus {
+    background: #ffffff;
+    border-color: var(--dark-tomato, #db4444);
+    box-shadow: 0 0 0 4px rgba(219, 68, 68, 0.1);
 
     &::placeholder {
-      color: var(--dark-tomato);
+      color: #6c757d;
     }
   }
 
-  &:focus::placeholder {
-    color: var(--black) !important;
+  &[class~="invalid"] {
+    background: #fff5f5;
+    border-color: #ff6b6b;
+
+    &::placeholder {
+      color: #ffa8a8;
+    }
+    
+    &:focus {
+      box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.1);
+    }
   }
 }
 
-.inputs input::placeholder {
-  color: var(--regular-light-gray);
+.input + .input {
+  margin-top: 4px;
 }

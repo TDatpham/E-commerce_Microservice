@@ -19,7 +19,8 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private String email;
+    private String phone;
     private String fullName;
     private String address;
-    private String role = "USER"; // ADMIN or USER
+    private String role = "USER"; // ADMIN, USER, SELLER
 }

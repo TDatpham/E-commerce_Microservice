@@ -21,6 +21,24 @@ public class ProductController {
         return productService.getAllProducts();
     }
 
+    @GetMapping("/status/{status}")
+    public List<Product> getProductsByStatus(@PathVariable String status) {
+        return productService.getProductsByStatus(status);
+    }
+
+    @GetMapping("/seller/{sellerId}")
+    public List<Product> getProductsBySeller(@PathVariable Long sellerId) {
+        return productService.getProductsBySellerId(sellerId);
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<Product> updateProductStatus(@PathVariable Long id, @RequestBody java.util.Map<String, String> body) {
+        return productService.getProductById(id).map(p -> {
+            p.setStatus(body.get("status"));
+            return ResponseEntity.ok(productService.saveProduct(p));
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
         return productService.getProductById(id)
@@ -42,6 +60,8 @@ public class ProductController {
     public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product product) {
         return ResponseEntity.ok(productService.updateProduct(id, product));
     }
+
+    // Unified reduce-stock logic moved to StockController or handled via REST directly.
 
     @GetMapping("/stats")
     public List<Product> getStats() {

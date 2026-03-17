@@ -39,24 +39,31 @@ public class UserController {
     }
 
     @PostMapping("/auth/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody User user) {
-        User savedUser = userService.register(user);
-        return ResponseEntity.ok(AuthResponse.builder()
-                .accessToken(jwtUtils.generateAccessToken(savedUser.getUsername()))
-                .refreshToken(jwtUtils.generateRefreshToken(savedUser.getUsername()))
-                .user(savedUser)
-                .build());
+    public ResponseEntity<Object> register(@RequestBody User user) {
+        try {
+            User savedUser = userService.register(user);
+            return ResponseEntity.ok((Object) AuthResponse.builder()
+                    .accessToken(jwtUtils.generateAccessToken(savedUser.getUsername()))
+                    .refreshToken(jwtUtils.generateRefreshToken(savedUser.getUsername()))
+                    .user(savedUser)
+                    .build());
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body((Object) e.getMessage());
+        }
     }
 
     @PostMapping("/auth/login")
     public ResponseEntity<Object> login(@RequestBody Map<String, String> creds) {
-        return userService.login(creds.get("username"), creds.get("password"))
+        String loginKey = creds.get("username");
+        if (loginKey == null) loginKey = creds.get("email");
+
+        return userService.login(loginKey, creds.get("password"))
                 .map(u -> ResponseEntity.ok((Object) AuthResponse.builder()
                         .accessToken(jwtUtils.generateAccessToken(u.getUsername()))
                         .refreshToken(jwtUtils.generateRefreshToken(u.getUsername()))
                         .user(u)
                         .build()))
-                .orElse(ResponseEntity.status(401).body((Object) "Invalid credentials"));
+                .orElse(ResponseEntity.status(401).body((Object) "Invalid username or password"));
     }
 
     @PostMapping("/auth/refresh")
@@ -66,44 +73,56 @@ public class UserController {
             String username = jwtUtils.extractUsername(refreshToken);
             if (jwtUtils.validateToken(refreshToken, username)) {
                 String newAccessToken = jwtUtils.generateAccessToken(username);
-                return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
+                return ResponseEntity.ok((Object) Map.of("accessToken", newAccessToken));
             }
         } catch (Exception e) {
-            return ResponseEntity.status(401).body("Invalid refresh token");
+            return ResponseEntity.status(401).body((Object) "Invalid refresh token");
         }
-        return ResponseEntity.status(401).body("Invalid refresh token");
+        return ResponseEntity.status(401).body((Object) "Invalid refresh token");
     }
 
     @PostMapping("/auth/send-otp")
-    public ResponseEntity<String> sendOtp(@RequestParam String email) {
-        otpService.generateOtp(email);
-        return ResponseEntity.ok("OTP sent successfully");
+    public ResponseEntity<Object> sendOtp(@RequestParam String loginKey) {
+        try {
+            otpService.generateOtp(loginKey);
+            return ResponseEntity.ok((Object) "OTP sent successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body((Object) "Failed to send OTP: " + e.getMessage());
+        }
     }
 
     @PostMapping("/auth/verify-otp")
-    public ResponseEntity<Object> verifyOtp(@RequestParam String email, @RequestParam String code) {
-        if (otpService.verifyOtp(email, code)) {
-            return userService.getUserByEmail(email)
-                    .map(u -> ResponseEntity.ok((Object) u))
+    public ResponseEntity<Object> verifyOtp(@RequestParam String loginKey, @RequestParam String code) {
+        if (otpService.verifyOtp(loginKey, code)) {
+            return userService.findUserByAnyKey(loginKey)
+                    .map(u -> {
+                        String accessToken = jwtUtils.generateAccessToken(u.getUsername());
+                        String refreshToken = jwtUtils.generateRefreshToken(u.getUsername());
+                        return ResponseEntity.ok((Object) AuthResponse.builder()
+                                .accessToken(accessToken)
+                                .refreshToken(refreshToken)
+                                .user(u)
+                                .build());
+                    })
                     .orElse(ResponseEntity.status(404).body((Object) "User not found"));
         }
         return ResponseEntity.status(401).body((Object) "Invalid or expired OTP");
     }
 
     @PostMapping("/auth/reset-password")
-    public ResponseEntity<String> resetPassword(
-            @RequestParam String email,
+    public ResponseEntity<Object> resetPassword(
+            @RequestParam String loginKey,
             @RequestParam String otp,
             @RequestParam String newPassword) {
-        if (!otpService.verifyOtp(email, otp)) {
-            return ResponseEntity.status(401).body("Invalid or expired OTP");
+        if (!otpService.verifyOtp(loginKey, otp)) {
+            return ResponseEntity.status(401).body((Object) "Invalid or expired OTP");
         }
-        return userService.getUserByEmail(email)
+        return userService.findUserByAnyKey(loginKey)
                 .map(user -> {
                     userService.updatePassword(user, newPassword);
-                    return ResponseEntity.ok("Password reset successfully");
+                    return ResponseEntity.ok((Object) "Password reset successfully");
                 })
-                .orElse(ResponseEntity.status(404).body("User not found"));
+                .orElse(ResponseEntity.status(404).body((Object) "User not found"));
     }
 
     @GetMapping("/users/{id}")
@@ -119,11 +138,13 @@ public class UserController {
     }
 
     @GetMapping("/users")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Iterable<User>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @DeleteMapping("/users/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.delete(id);
         return ResponseEntity.noContent().build();

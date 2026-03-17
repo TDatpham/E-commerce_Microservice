@@ -15,6 +15,7 @@ import SearchPage from "../Components/Search/SearchPage";
 import SignUp from "../Components/SignUp/SignUp";
 import WishList from "../Components/WishList/WishList";
 import AdminDashboard from "../Components/Admin/AdminDashboard";
+import SellerDashboard from "../Components/Seller/SellerDashboard";
 
 export const ROUTES_CONFIG = [
   { path: "/", element: <Home /> },
@@ -33,5 +34,6 @@ export const ROUTES_CONFIG = [
   { path: "/profile", element: <AccountPage /> },
   { path: "/search", element: <SearchPage /> },
   { path: "/admin", element: <AdminDashboard /> },
+  { path: "/seller", element: <SellerDashboard /> },
   { path: "*", element: <NotFoundPage /> },
 ];

@@ -4,11 +4,12 @@ import { Navigate, useLocation } from "react-router-dom";
 import { pagesRequireSignIn } from "../Data/globalVariables";
 import { showAlert } from "../Features/alertsSlice";
 
-const ADMIN_PAGES = ["/admin"];
+import { isUserAdmin, isUserSeller } from "../Functions/helper";
 
 const RequiredAuth = ({ children }) => {
   const { loginInfo } = useSelector((state) => state.user);
-  const { isSignIn, role } = loginInfo;
+  const isSignIn = loginInfo?.isSignIn;
+  const userRole = loginInfo?.role;
   const location = useLocation();
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -18,27 +19,42 @@ const RequiredAuth = ({ children }) => {
   const isPageRequiringSignIn = (page) =>
     pagesRequireSignIn.includes(page) && !isSignIn;
 
-  const isAdminPage = ADMIN_PAGES.includes(pathName);
-  const isAdmin = role && (role.toUpperCase() === "ADMIN");
+  const isAdminPage = pathName === "/admin" || pathName.startsWith("/admin/");
+  const isAdmin = isUserAdmin(userRole);
+
+  const isSellerPage = pathName === "/seller" || pathName.startsWith("/seller/");
+  const isSeller = isUserSeller(userRole);
 
   if (isLoginOrSignUpPage && isSignIn) return <Navigate to="/" />;
   if (isPageRequiringSignIn(pathName)) {
     loginFirstAlert();
     return <Navigate to="/login" />;
   }
+
   if (isAdminPage && (!isSignIn || !isAdmin)) {
+    const roleDesc = userRole ? ` (Your role: ${JSON.stringify(userRole)})` : " (Not logged in)";
+    accessDeniedAlert("Access denied. Admin only." + roleDesc);
+    return <Navigate to="/" />;
+  }
+
+  if (isSellerPage && (!isSignIn || !isSeller)) {
+    const roleDesc = userRole ? ` (Your role: ${JSON.stringify(userRole)})` : " (Not logged in)";
+    accessDeniedAlert("Access denied. Seller only." + roleDesc);
+    return <Navigate to="/" />;
+  }
+
+  function accessDeniedAlert(text) {
     setTimeout(
       () =>
         dispatch(
           showAlert({
-            alertText: "Access denied. Admin only.",
+            alertText: text,
             alertState: "error",
             alertType: "alert",
           })
         ),
       300
     );
-    return <Navigate to="/" />;
   }
 
   function loginFirstAlert() {

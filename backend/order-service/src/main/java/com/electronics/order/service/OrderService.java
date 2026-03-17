@@ -24,20 +24,18 @@ public class OrderService {
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
 
-    @Value("${product.service.url:http://localhost:8081}")
+    @Value("${PRODUCT_SERVICE_URL:http://localhost:8081}")
     private String productServiceUrl;
 
+    @org.springframework.transaction.annotation.Transactional
     public Order createOrder(Order order) {
         order.setOrderDate(LocalDateTime.now());
         order.setStatus("PENDING");
         Order savedOrder = orderRepository.save(order);
 
         // 1. Directly call product-service to reduce stock (synchronous, reliable)
-        try {
-            reduceStockDirectly(savedOrder.getItems());
-        } catch (Exception e) {
-            System.err.println("[OrderService] Failed to reduce stock via REST: " + e.getMessage());
-        }
+        // No more try-catch here so that failures trigger DB rollback
+        reduceStockDirectly(savedOrder.getItems());
 
         // 2. Also send Kafka event as backup/async notification
         try {
@@ -84,5 +82,10 @@ public class OrderService {
                     return orderRepository.save(order);
                 })
                 .orElseThrow(() -> new RuntimeException("Order not found"));
+    }
+
+    /** Admin: delete an order. */
+    public void deleteOrder(Long id) {
+        orderRepository.deleteById(id);
     }
 }

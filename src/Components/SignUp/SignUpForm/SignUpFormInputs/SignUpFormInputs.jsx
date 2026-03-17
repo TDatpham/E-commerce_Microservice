@@ -7,7 +7,7 @@ import s from "./SignUpFormInputs.module.scss";
 const SignUpFormInputs = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { fullName, emailOrPhone, password } = useSelector(
+  const { fullName, emailOrPhone, password, role } = useSelector(
     (state) => state.forms.signUp
   );
 
@@ -52,6 +52,32 @@ const SignUpFormInputs = () => {
           aria-required="true"
         />
         <ShowHidePassword />
+      </div>
+
+      <div className={s.roleSelection}>
+        <p>{t("loginSignUpPage.chooseRole") || "I want to join as a:"}</p>
+        <div className={s.roles}>
+          <label>
+            <input
+              type="radio"
+              name="role"
+              value="USER"
+              checked={role === "USER"}
+              onChange={updateInputOnChange}
+            />
+            <span>{t("loginSignUpPage.roleUser") || "User"}</span>
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="role"
+              value="SELLER"
+              checked={role === "SELLER"}
+              onChange={updateInputOnChange}
+            />
+            <span>{t("loginSignUpPage.roleSeller") || "Seller"}</span>
+          </label>
+        </div>
       </div>
     </div>
   );

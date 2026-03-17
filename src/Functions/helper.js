@@ -199,3 +199,27 @@ export function isMobileScreenWidth() {
 export function isEmailValid(emailInput) {
   return regexPatterns.email.test(emailInput.value);
 }
+
+/** Check if the provided role matches 'admin'. Handles strings, arrays, and ROLE_ prefix. */
+export function isUserAdmin(role) {
+  if (!role) return false;
+  const roles = Array.isArray(role) ? role : [role];
+  return roles.some((r) => {
+    const roleStr = String(r || "")
+      .trim()
+      .toLowerCase();
+    return roleStr === "admin" || roleStr === "role_admin";
+  });
+}
+
+/** Check if the provided role matches 'seller'. Handles strings, arrays, and ROLE_ prefix. */
+export function isUserSeller(role) {
+  if (!role) return false;
+  const roles = Array.isArray(role) ? role : [role];
+  return roles.some((r) => {
+    const roleStr = String(r || "")
+      .trim()
+      .toLowerCase();
+    return roleStr === "seller" || roleStr === "role_seller";
+  });
+}

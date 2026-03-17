@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { showAlert } from "src/Features/alertsSlice";
 import { orderApi } from "src/Services/api";
 import { store } from "src/App/store";
-import { transferProducts, clearCart, updateProductsState } from "src/Features/productsSlice";
+import { clearCart } from "src/Features/productsSlice";
 import {
   blurInputs,
   isCheckoutFormValid,
@@ -75,8 +75,18 @@ const CheckoutPage = () => {
 
     try {
       const { loginInfo } = store.getState().user;
+      if (!loginInfo?.isSignIn || !loginInfo?.id) {
+        dispatch(
+          showAlert({
+            alertText: "Please sign in again to place your order.",
+            alertState: "error",
+            alertType: "alert",
+          })
+        );
+        return;
+      }
       const orderData = {
-        userId: loginInfo?.id || 1,
+        userId: loginInfo.id,
         totalAmount: cartProducts.reduce((acc, p) => {
           const price = typeof p.afterDiscount === 'string'
             ? parseFloat(p.afterDiscount.replaceAll(",", ""))
@@ -95,8 +105,7 @@ const CheckoutPage = () => {
       dispatch(showAlert({ alertText: "Placing your order...", alertState: "info", alertType: "alert" }));
       await orderApi.create(orderData);
 
-      // Clear cart and move to orders
-      dispatch(transferProducts({ from: "cartProducts", to: "orderProducts" }));
+      // Clear cart only (orders are per-account and loaded from backend)
       dispatch(clearCart());
 
       dispatch(

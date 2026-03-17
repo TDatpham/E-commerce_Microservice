@@ -5,12 +5,12 @@ import s from "./LogIn.module.scss";
 import LogInForm from "./LogInForm/LogInForm";
 
 const LogIn = () => {
-  useScrollOnMount(260);
+  useScrollOnMount(0);
 
   return (
     <>
       <Helmet>
-        <title>Login in</title>
+        <title>Login</title>
         <meta
           name="description"
           content="Log in to your Exclusive account to access personalized shopping features, track orders, and manage your account details securely."
@@ -23,7 +23,9 @@ const LogIn = () => {
             <img src={signUpImg} alt="Shopping cart and phone" />
           </div>
 
-          <LogInForm />
+          <div className={s.formContainer}>
+            <LogInForm />
+          </div>
         </div>
       </main>
     </>

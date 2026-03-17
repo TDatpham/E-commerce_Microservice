@@ -14,6 +14,8 @@ import ProductCard from "../Shared/ProductsCards/ProductCard/ProductCard";
 import FilterSidebar from "./FilterSidebar/FilterSidebar";
 import s from "./ProductsPage.module.scss";
 
+const ITEMS_PER_PAGE = 12;
+
 const ProductsPage = () => {
   const { loadingProductsPage } = useSelector((state) => state.loading);
   const { products, loading: productsLoading } = useFetchProducts();
@@ -24,8 +26,9 @@ const ProductsPage = () => {
     categories: [],
     minPrice: "",
     maxPrice: "",
-    colors: []
   });
+
+  const [currentPage, setCurrentPage] = useState(1);
 
   useUpdateLoadingState({
     loadingState: loadingProductsPage,
@@ -45,16 +48,6 @@ const ProductsPage = () => {
     return Array.from(cats).sort();
   }, [products]);
 
-  const availableColors = useMemo(() => {
-    const cols = new Set();
-    products.forEach(p => {
-      if (p.colors && Array.isArray(p.colors)) {
-        p.colors.forEach(c => cols.add(c.color || c));
-      }
-    });
-    return Array.from(cols);
-  }, [products]);
-
   const filteredProducts = useMemo(() => {
     return products.filter(p => {
       // Category filter
@@ -65,15 +58,21 @@ const ProductsPage = () => {
       if (filters.minPrice && price < parseFloat(filters.minPrice)) return false;
       if (filters.maxPrice && price > parseFloat(filters.maxPrice)) return false;
 
-      // Color filter
-      if (filters.colors.length > 0) {
-        const productColors = p.colors?.map(c => c.color || c) || [];
-        if (!filters.colors.some(col => productColors.includes(col))) return false;
-      }
-
       return true;
     });
   }, [products, filters]);
+
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredProducts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredProducts, currentPage]);
+
+  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const isLoading = loadingProductsPage || productsLoading;
 
@@ -90,9 +89,11 @@ const ProductsPage = () => {
         <main className={s.productsPage}>
           <FilterSidebar
             filters={filters}
-            setFilters={setFilters}
+            setFilters={(newFilters) => {
+              setFilters(newFilters);
+              setCurrentPage(1); // Reset to first page on filter change
+            }}
             categories={availableCategories}
-            availableColors={availableColors}
           />
 
           <section className={s.productsColumn}>
@@ -101,19 +102,51 @@ const ProductsPage = () => {
                 <SkeletonCards numberOfCards={6} />
               </div>
             ) : (
-              <div className={s.productsGrid}>
-                {filteredProducts.length > 0 ? (
-                  filteredProducts.map(product => (
-                    <ProductCard
-                      product={product}
-                      key={product.id}
-                      customization={productCardCustomizations.allProducts}
-                    />
-                  ))
-                ) : (
-                  <p className={s.noProducts}>No products match your filters.</p>
+              <>
+                <div className={s.productsGrid}>
+                  {paginatedProducts.length > 0 ? (
+                    paginatedProducts.map(product => (
+                      <ProductCard
+                        product={product}
+                        key={product.id}
+                        customization={productCardCustomizations.allProducts}
+                      />
+                    ))
+                  ) : (
+                    <p className={s.noProducts}>No products match your filters.</p>
+                  )}
+                </div>
+
+                {totalPages > 1 && (
+                  <div className={s.pagination}>
+                    <button
+                      disabled={currentPage === 1}
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      className={s.pageBtn}
+                    >
+                      {t("productsPage.prev") || "Prev"}
+                    </button>
+
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                      <button
+                        key={page}
+                        onClick={() => handlePageChange(page)}
+                        className={`${s.pageBtn} ${currentPage === page ? s.active : ""}`}
+                      >
+                        {page}
+                      </button>
+                    ))}
+
+                    <button
+                      disabled={currentPage === totalPages}
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      className={s.pageBtn}
+                    >
+                      {t("productsPage.next") || "Next"}
+                    </button>
+                  </div>
                 )}
-              </div>
+              </>
             )}
           </section>
         </main>

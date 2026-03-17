@@ -1,8 +1,13 @@
-import React, { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { showAlert } from "src/Features/alertsSlice";
 import { productApi, orderApi, authApi, categoryApi } from "src/Services/api";
-import { SalesByCategoryPie, SalesByCategoryBar, RevenueByMonthLine, OrdersCountByMonthLine } from "./AdminCharts";
+import {
+  SalesByCategoryPie,
+  SalesByCategoryBar,
+  RevenueByMonthLine,
+  OrdersCountByMonthLine,
+} from "./AdminCharts";
 import s from "./AdminDashboard.module.scss";
 
 const TABS = {
@@ -60,8 +65,8 @@ const AdminDashboard = () => {
     try {
       const res = await productApi.getAll();
       setProducts(res.data || []);
-    } catch (err) {
-      console.error(err);
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -76,7 +81,7 @@ const AdminDashboard = () => {
 
   const fetchOrders = async () => {
     try {
-      const res = await orderApi.getAll?.();
+      const res = await orderApi.getAll();
       if (res?.data) setOrders(res.data);
     } catch (err) {
       console.error(err);
@@ -85,7 +90,7 @@ const AdminDashboard = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await authApi.getAllUsers?.();
+      const res = await authApi.getAllUsers();
       if (res?.data) setUsers(res.data);
     } catch (err) {
       console.error(err);
@@ -118,7 +123,7 @@ const AdminDashboard = () => {
     e.preventDefault();
     try {
       if (isEditingProduct) {
-        await productApi.update(currentProduct.id, currentProduct);
+        await productApi.update(currentProduct.id, { ...currentProduct, status: currentProduct.status || "APPROVED" });
         dispatch(
           showAlert({
             alertText: "Product updated successfully",
@@ -127,10 +132,10 @@ const AdminDashboard = () => {
           })
         );
       } else {
-        await productApi.create(currentProduct);
+        await productApi.create({ ...currentProduct, status: "APPROVED" });
         dispatch(
           showAlert({
-            alertText: "Product created successfully",
+            alertText: "Product created and approved",
             alertState: "success",
             alertType: "alert",
           })
@@ -143,6 +148,28 @@ const AdminDashboard = () => {
       dispatch(
         showAlert({
           alertText: "Operation failed",
+          alertState: "error",
+          alertType: "alert",
+        })
+      );
+    }
+  };
+
+  const handleApproveProduct = async (productId, status) => {
+    try {
+      await productApi.updateStatus(productId, status);
+      dispatch(
+        showAlert({
+          alertText: `Product ${status.toLowerCase()} successfully`,
+          alertState: "success",
+          alertType: "alert",
+        })
+      );
+      fetchProducts();
+    } catch (err) {
+      dispatch(
+        showAlert({
+          alertText: "Failed to update product status",
           alertState: "error",
           alertType: "alert",
         })
@@ -310,6 +337,7 @@ const AdminDashboard = () => {
     }
   };
 
+
   const handleUserDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     try {
@@ -352,6 +380,30 @@ const AdminDashboard = () => {
           alertType: "alert",
         })
       );
+    }
+  };
+
+  const handleDeleteOrder = async (orderId) => {
+    if (window.confirm("Are you sure you want to delete this order?")) {
+      try {
+        await orderApi.delete(orderId);
+        dispatch(
+          showAlert({
+            alertText: "Order deleted successfully",
+            alertState: "success",
+            alertType: "alert",
+          })
+        );
+        await fetchOrders();
+      } catch (err) {
+        dispatch(
+          showAlert({
+            alertText: "Failed to delete order",
+            alertState: "error",
+            alertType: "alert",
+          })
+        );
+      }
     }
   };
 
@@ -408,120 +460,154 @@ const AdminDashboard = () => {
     }, fullYear);
   }, [orders]);
 
+  const totalRevenue = useMemo(() => orders.reduce((acc, o) => acc + (o.totalAmount || 0), 0), [orders]);
+  const totalOrders = orders.length;
+  const totalUsers = users.length;
+  const totalProducts = products.length;
+
+  const transactionData = useMemo(() => {
+    // Synthesizing daily data for the Transaction chart based on the image
+    const daysInMonth = 10;
+    const data = [];
+    for (let i = 0; i <= daysInMonth; i++) {
+      let dayName = "";
+      if (i === 0) dayName = "January 3, 2026";
+      else if (i === daysInMonth) dayName = "January 10, 2026";
+      
+      data.push({
+        name: dayName,
+        deposit: 6000 - i * 500,
+        withdrawal: 1600 + i * 30,
+        transfer: 2900 + i * 110,
+        credit: 0 + i * 400,
+      });
+    }
+    return data;
+  }, []);
+
+
   return (
     <div className={s.adminDashboard}>
       <div className="container">
         <div className={s.header}>
-          <h1>Admin Dashboard</h1>
-          <button onClick={fetchAllData} className={s.refreshBtn}>
-            Refresh Data
-          </button>
+          <div className={s.logoArea}>
+            <span className={s.logoIcon}>🛠️</span>
+            <h1>Admin Dashboard</h1>
+          </div>
+          <div className={s.headerActions}>
+            <button onClick={fetchAllData} className={s.refreshBtn}>
+              <span className={s.refreshIcon}>🔄</span> Refresh
+            </button>
+          </div>
         </div>
 
         <div className={s.adminLayout}>
           <aside className={s.sidebar}>
             <button
               type="button"
-              className={`${s.tabBtn} ${activeTab === TABS.OVERVIEW ? s.activeTab : ""
-                }`}
+              className={`${s.tabBtn} ${activeTab === TABS.OVERVIEW ? s.activeTab : ""}`}
               onClick={() => setActiveTab(TABS.OVERVIEW)}
             >
-              Overview
+              <span className={s.tabIcon}>📈</span> Statistics
             </button>
             <button
               type="button"
-              className={`${s.tabBtn} ${activeTab === TABS.PRODUCTS ? s.activeTab : ""
-                }`}
+              className={`${s.tabBtn} ${activeTab === TABS.PRODUCTS ? s.activeTab : ""}`}
               onClick={() => setActiveTab(TABS.PRODUCTS)}
             >
-              Products
+              <span className={s.tabIcon}>🛒</span> Products
             </button>
             <button
               type="button"
-              className={`${s.tabBtn} ${activeTab === TABS.CATEGORIES ? s.activeTab : ""
-                }`}
+              className={`${s.tabBtn} ${activeTab === TABS.CATEGORIES ? s.activeTab : ""}`}
               onClick={() => setActiveTab(TABS.CATEGORIES)}
             >
-              Categories
+              <span className={s.tabIcon}>🗂️</span> Categories
             </button>
             <button
               type="button"
-              className={`${s.tabBtn} ${activeTab === TABS.USERS ? s.activeTab : ""
-                }`}
+              className={`${s.tabBtn} ${activeTab === TABS.USERS ? s.activeTab : ""}`}
               onClick={() => setActiveTab(TABS.USERS)}
             >
-              Users
+              <span className={s.tabIcon}>👤</span> Users
             </button>
             <button
               type="button"
-              className={`${s.tabBtn} ${activeTab === TABS.ORDERS ? s.activeTab : ""
-                }`}
+              className={`${s.tabBtn} ${activeTab === TABS.ORDERS ? s.activeTab : ""}`}
               onClick={() => setActiveTab(TABS.ORDERS)}
             >
-              Orders
+              <span className={s.tabIcon}>📦</span> Orders
             </button>
           </aside>
 
           <div className={s.content}>
             {activeTab === TABS.OVERVIEW && (
               <section className={s.statsSection}>
-                <h2>Best Selling Products (Analysis)</h2>
+                <h2>Website Overview</h2>
                 <div className={s.statsGrid}>
-                  {stats.map((p) => (
-                    <div key={p.id} className={s.statCard}>
-                      <h3>{p.shortName}</h3>
-                      <p>
-                        Sold: <strong>{p.sold || 0}</strong> units
-                      </p>
-                      <p>
-                        Revenue: $
-                        {((p.sold || 0) * (p.price || 0)).toFixed(2)}
-                      </p>
+                  <div className={s.statCard}>
+                    <h3>Total Revenue</h3>
+                    <p className={s.statNumber}>${totalRevenue.toLocaleString()}</p>
+                    <span className={s.statGrowth}>+12.5% vs last month</span>
+                  </div>
+                  <div className={s.statCard}>
+                    <h3>Total Orders</h3>
+                    <p className={s.statNumber}>{totalOrders}</p>
+                    <span className={s.statGrowth}>+5.2% vs last month</span>
+                  </div>
+                  <div className={s.statCard}>
+                    <h3>Total Customers</h3>
+                    <p className={s.statNumber}>{totalUsers}</p>
+                    <span className={s.statGrowth}>+2.4% vs last month</span>
+                  </div>
+                  <div className={s.statCard}>
+                    <h3>Total Products</h3>
+                    <p className={s.statNumber}>{totalProducts}</p>
+                    <span className={s.statGrowth}>Live in store</span>
+                  </div>
+                </div>
+
+                <div className={s.chartsGrid}>
+                  {/* 1) Bar Chart */}
+                  <div className={s.chartBlock}>
+                    <h2>Total sales by categories</h2>
+                    {Object.keys(salesByCategory).length ? (
+                      <SalesByCategoryBar data={salesByCategory} />
+                    ) : (
+                      <p className="chartNoData">No data for sales by category.</p>
+                    )}
+                  </div>
+
+                  {/* 3) Pie Chart */}
+                  <div className={s.chartBlock}>
+                    <div className={s.chartHeader}>
+                      <h2>Revenue distribution</h2>
+                      <span className={s.chartSubtitle}>01/10/2026</span>
                     </div>
-                  ))}
-                  {stats.length === 0 && (
-                    <p>No stats available yet. Place some orders first.</p>
-                  )}
-                </div>
+                    {Object.keys(salesByCategory).length ? (
+                      <SalesByCategoryPie data={salesByCategory} />
+                    ) : (
+                      <p className="chartNoData">No data.</p>
+                    )}
+                  </div>
 
-                {/* Biểu đồ tròn: Số lượng bán theo thể loại */}
-                <div className={s.chartBlock}>
-                  <h2>Thống kê bán theo thể loại (Biểu đồ tròn)</h2>
-                  {Object.keys(salesByCategory).length ? (
-                    <SalesByCategoryPie data={salesByCategory} />
-                  ) : (
-                    <p>Chưa có dữ liệu bán theo thể loại.</p>
-                  )}
-                </div>
+                  <div className={s.chartBlock}>
+                    <h2>Revenue breakdown (Curve)</h2>
+                    {Object.keys(revenueByMonth).length ? (
+                      <RevenueByMonthLine data={revenueByMonth} />
+                    ) : (
+                      <p className="chartNoData">No orders to calculate revenue.</p>
+                    )}
+                  </div>
 
-                {/* Biểu đồ cột: Số lượng bán theo thể loại */}
-                <div className={s.chartBlock}>
-                  <h2>Thống kê bán theo thể loại (Biểu đồ cột)</h2>
-                  {Object.keys(salesByCategory).length ? (
-                    <SalesByCategoryBar data={salesByCategory} />
-                  ) : (
-                    <p>Chưa có dữ liệu bán theo thể loại.</p>
-                  )}
-                </div>
-
-                {/* Biểu đồ đường: Doanh thu theo tháng trong năm */}
-                <div className={s.chartBlock}>
-                  <h2>Doanh thu theo tháng trong năm (Biểu đồ đường)</h2>
-                  {Object.keys(revenueByMonth).length ? (
-                    <RevenueByMonthLine data={revenueByMonth} />
-                  ) : (
-                    <p>Chưa có đơn hàng để tính doanh thu theo tháng.</p>
-                  )}
-                </div>
-
-                {/* Biểu đồ đường: Số đơn hàng theo tháng */}
-                <div className={s.chartBlock}>
-                  <h2>Số đơn hàng theo tháng (Biểu đồ đường)</h2>
-                  {Object.keys(ordersCountByMonth).length ? (
-                    <OrdersCountByMonthLine data={ordersCountByMonth} />
-                  ) : (
-                    <p>Chưa có đơn hàng để thống kê số lượng.</p>
-                  )}
+                  <div className={s.chartBlock}>
+                    <h2>Orders count by month</h2>
+                    {Object.keys(ordersCountByMonth).length ? (
+                      <OrdersCountByMonthLine data={ordersCountByMonth} />
+                    ) : (
+                      <p className="chartNoData">No orders yet.</p>
+                    )}
+                  </div>
                 </div>
               </section>
             )}
@@ -618,11 +704,11 @@ const AdminDashboard = () => {
                   <table className={s.table}>
                     <thead>
                       <tr>
-                        <th>Name</th>
+                         <th>Name</th>
                         <th>Category</th>
                         <th>Price</th>
-                        <th>Stock</th>
-                        <th>Sold</th>
+                        <th>Status</th>
+                        <th>Seller ID</th>
                         <th>Actions</th>
                       </tr>
                     </thead>
@@ -632,21 +718,33 @@ const AdminDashboard = () => {
                           <td>{p.shortName}</td>
                           <td>{p.category}</td>
                           <td>${p.price}</td>
-                          <td>{p.stockQuantity}</td>
-                          <td>{p.sold || 0}</td>
+                          <td data-status={p.status}>
+                            <span className={`${s.statusBadge} ${s[p.status?.toLowerCase()]}`}>
+                              {p.status || "PENDING"}
+                            </span>
+                          </td>
+                          <td>{p.sellerId || "System"}</td>
                           <td>
-                            <button
-                              onClick={() => handleProductEdit(p)}
-                              className={s.editBtn}
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => handleProductDelete(p.id)}
-                              className={s.deleteBtn}
-                            >
-                              Delete
-                            </button>
+                            <div className={s.actionBtns}>
+                              {p.status === "PENDING" && (
+                                <>
+                                  <button onClick={() => handleApproveProduct(p.id, "APPROVED")} className={s.approveBtn}>Approve</button>
+                                  <button onClick={() => handleApproveProduct(p.id, "REJECTED")} className={s.rejectBtn}>Reject</button>
+                                </>
+                              )}
+                              <button
+                                onClick={() => handleProductEdit(p)}
+                                className={s.editBtn}
+                              >
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => handleProductDelete(p.id)}
+                                className={s.deleteBtn}
+                              >
+                                Delete
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -781,6 +879,7 @@ const AdminDashboard = () => {
                         onChange={handleUserFormChange}
                       >
                         <option value="USER">USER</option>
+                        <option value="SELLER">SELLER</option>
                         <option value="ADMIN">ADMIN</option>
                       </select>
                     </div>
@@ -869,9 +968,9 @@ const AdminDashboard = () => {
                   <table className={s.table}>
                     <thead>
                       <tr>
-                        <th>ID</th>
-                        <th>User</th>
-                        <th>Total</th>
+                        <th>Order ID</th>
+                        <th>User ID</th>
+                        <th>Total Amount</th>
                         <th>Status</th>
                         <th>Date</th>
                         <th>Actions</th>
@@ -880,7 +979,7 @@ const AdminDashboard = () => {
                     <tbody>
                       {filteredOrders.map((o) => (
                         <tr key={o.id}>
-                          <td>{o.id}</td>
+                          <td>#{o.id}</td>
                           <td>{o.userId}</td>
                           <td>${o.totalAmount}</td>
                           <td>
@@ -889,6 +988,7 @@ const AdminDashboard = () => {
                               onChange={(e) =>
                                 handleOrderStatusChange(o.id, e.target.value)
                               }
+                              className={s.statusSelect}
                             >
                               <option value="PENDING">PENDING</option>
                               <option value="SHIPPED">SHIPPED</option>
@@ -896,8 +996,18 @@ const AdminDashboard = () => {
                               <option value="CANCELLED">CANCELLED</option>
                             </select>
                           </td>
-                          <td>{o.orderDate}</td>
-                          <td>-</td>
+                          <td>{parseDate(o.orderDate).toLocaleDateString()}</td>
+                          <td>
+                            <div className={s.actionBtns}>
+                                <button
+                                    onClick={() => handleDeleteOrder(o.id)}
+                                    className={s.deleteBtn}
+                                    style={{ padding: '6px 12px', fontSize: '12px' }}
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                          </td>
                         </tr>
                       ))}
                     </tbody>

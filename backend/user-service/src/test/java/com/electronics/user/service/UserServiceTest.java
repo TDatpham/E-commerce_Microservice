@@ -18,6 +18,9 @@ class UserServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+
     @InjectMocks
     private UserService userService;
 
@@ -32,12 +35,14 @@ class UserServiceTest {
         user.setUsername("testuser");
         user.setPassword("password");
 
-        when(userRepository.save(any(User.class))).thenReturn(user);
+        when(passwordEncoder.encode(anyString())).thenReturn("hashedPassword");
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         User savedUser = userService.register(user);
 
         assertNotNull(savedUser);
         assertEquals("testuser", savedUser.getUsername());
+        assertEquals("hashedPassword", savedUser.getPassword());
         verify(userRepository, times(1)).save(user);
     }
 
@@ -48,6 +53,7 @@ class UserServiceTest {
         user.setPassword("password");
 
         when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches("password", "password")).thenReturn(true);
 
         Optional<User> result = userService.login("testuser", "password");
 

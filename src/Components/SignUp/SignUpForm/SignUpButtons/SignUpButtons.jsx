@@ -1,7 +1,7 @@
 import { GoogleLogin } from "@react-oauth/google";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { showAlert } from "src/Features/alertsSlice";
 import { setLoginData } from "src/Features/userSlice";
 import { loadUserProducts } from "src/Features/productsSlice";
@@ -13,24 +13,42 @@ import s from "./SignUpButtons.module.scss";
 const SignUpButtons = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
-      const response = await authApi.googleLogin(credentialResponse.credential);
+      const idToken = credentialResponse?.credential;
+      if (!idToken) {
+        dispatch(
+          showAlert({
+            alertText: "Google did not return a valid token. Please try again.",
+            alertState: "error",
+            alertType: "alert",
+          })
+        );
+        return;
+      }
+
+      const response = await authApi.googleLogin(idToken);
       if (response.data) {
-        dispatch(setLoginData(response.data));
-        // Restore user-specific favorites and wishlist
-        const userId = response.data?.user?.id || response.data?.id;
-        if (userId) {
-          const favoritesProducts = loadUserData("favoritesProducts", userId);
-          const wishList = loadUserData("wishList", userId);
-          dispatch(loadUserProducts({ favoritesProducts, wishList }));
-        }
+        handleSuccessLogin(response.data);
         signInAlert(t, dispatch);
+        setTimeout(() => navigate("/"), 2000);
       }
     } catch (error) {
       console.error("Google Sign Up Error:", error);
-      dispatch(showAlert({ alertText: "Google Sign Up Failed", alertState: "error", alertType: "alert" }));
+      const msg = error?.response?.data || "Google Sign Up Failed. Please try again.";
+      dispatch(showAlert({ alertText: msg, alertState: "error", alertType: "alert" }));
+    }
+  };
+
+  const handleSuccessLogin = (data) => {
+    dispatch(setLoginData(data));
+    const userId = data?.user?.id || data?.id;
+    if (userId) {
+      const favoritesProducts = loadUserData("favoritesProducts", userId);
+      const wishList = loadUserData("wishList", userId);
+      dispatch(loadUserProducts({ favoritesProducts, wishList }));
     }
   };
 
@@ -43,7 +61,15 @@ const SignUpButtons = () => {
       <div className={s.googleBtnContainer}>
         <GoogleLogin
           onSuccess={handleGoogleSuccess}
-          onError={() => console.log('Google Sign Up Failed')}
+          onError={() =>
+            dispatch(
+              showAlert({
+                alertText: "Google Sign Up Failed. Please try again.",
+                alertState: "error",
+                alertType: "alert",
+              })
+            )
+          }
           text="signup_with"
         />
       </div>

@@ -22,7 +22,7 @@ const About = () => {
           name="description"
           content="About us, Launched in 2015, Exclusive is South Asia’s premier online shopping marketplace, offering over 1 million products from 10,500 sellers and 300 brands to 3 million customers in Bangladesh."
         />
-        <link ref="preload" as="image" type="image/webp" href={womenShopping} />
+        <link rel="preload" as="image" type="image/webp" href={womenShopping} />
       </Helmet>
 
       <main className={s.aboutPage}>

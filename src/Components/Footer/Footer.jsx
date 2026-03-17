@@ -86,8 +86,6 @@ const Footer = () => {
 
         <CopyRightsText />
       </div>
-
-      <RepoStarsForks />
     </footer>
   );
 };

@@ -9,6 +9,9 @@ import { productsData as staticProducts } from "src/Data/productsData";
 
 const OrderProducts = () => {
   const { t } = useTranslation();
+  const {
+    loginInfo: { isSignIn },
+  } = useSelector((state) => state.user);
   const { orderProducts: localOrders } = useSelector((state) => state.products);
   const { orders: backendOrders, loading } = useFetchOrders();
   const { products: backendProducts } = useFetchProducts();
@@ -30,9 +33,13 @@ const OrderProducts = () => {
         status: o.status
       };
     }))
-    : localOrders;
+    : (isSignIn ? [] : localOrders);
 
-  if (loading && localOrders.length === 0) return <div>Loading orders...</div>;
+  if (loading && ordersToDisplay.length === 0) return <div>Loading orders...</div>;
+
+  if (!loading && isSignIn && backendOrders.length === 0) {
+    return <div style={{ padding: "20px 0" }}>You have no orders yet.</div>;
+  }
 
   return (
     <table className={s.orderProducts}>

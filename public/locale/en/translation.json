@@ -16,6 +16,7 @@
     "home": "Home",
     "contact": "Contact",
     "about": "About",
+    "admin": "Admin",
     "profile": "Profile",
     "signUp": "Sign Up",
     "login": "Log In"
@@ -131,7 +132,9 @@
     "filterCategory": "Categories",
     "filterPrice": "Price Range",
     "filterColor": "Colors",
-    "resetFilters": "Reset Filters"
+    "resetFilters": "Reset Filters",
+    "prev": "Prev",
+    "next": "Next"
   },
   "productCard": {
     "buttonText": {
@@ -166,7 +169,8 @@
     "writeComment": "Write your comment (optional)",
     "submitReview": "Submit review",
     "commentsTitle": "Comments",
-    "noCommentsYet": "No comments yet. Be the first to review!"
+    "noCommentsYet": "No comments yet. Be the first to review!",
+    "loadMore": "Load More Comments"
   },
   "common": {
     "facebook": "Facebook",
@@ -265,6 +269,7 @@
   },
   "mobileNav": {
     "profile": "Profile",
+    "admin": "Admin",
     "home": "Home",
     "about": "About",
     "myCart": "My Cart",
@@ -448,7 +453,10 @@
     "login": "Log in to Exclusive",
     "forgotPassword": "Forgot password?",
     "alreadyHaveAcc": "Already have an account?",
-    "dontHaveAcc": "don't you have an account? "
+    "dontHaveAcc": "don't you have an account? ",
+    "chooseRole": "I want to join as a:",
+    "roleUser": "User",
+    "roleSeller": "Seller"
   },
   "favoritePage": {
     "title": "Favorites ({{numberOfProducts}})"
@@ -509,7 +517,9 @@
     "cancellations": "My Cancellations",
     "reviews": "My Reviews",
     "wishlist": "Wishlist",
-    "logout": "Logout"
+    "logout": "Logout",
+    "admin": "Admin Dashboard",
+    "seller": "Seller Dashboard"
   },
   "toastAlert": {
     "accountInfoUpdated": "Account's information updated.",

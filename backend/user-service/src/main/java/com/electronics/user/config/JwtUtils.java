@@ -14,10 +14,14 @@ import java.util.function.Function;
 
 @Component
 public class JwtUtils {
-    // In production, keep this secret somewhere safe
-    private final String SECRET_KEY = "eb82f768-3e9b-4e8c-8f2a-d8c9a5b3e1f0-dummy-secret-key-for-electronics-store";
-    private final long ACCESS_TOKEN_VALIDITY = 1000 * 60 * 15; // 15 minutes
-    private final long REFRESH_TOKEN_VALIDITY = 1000 * 60 * 60 * 24 * 7; // 7 days
+    @org.springframework.beans.factory.annotation.Value("${jwt.secret:eb82f768-3e9b-4e8c-8f2a-d8c9a5b3e1f0-dummy-secret-key-for-electronics-store}")
+    private String SECRET_KEY;
+    
+    @org.springframework.beans.factory.annotation.Value("${jwt.access-validity:900000}")
+    private long ACCESS_TOKEN_VALIDITY; // 15 minutes default
+    
+    @org.springframework.beans.factory.annotation.Value("${jwt.refresh-validity:604800000}")
+    private long REFRESH_TOKEN_VALIDITY; // 7 days default
 
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());

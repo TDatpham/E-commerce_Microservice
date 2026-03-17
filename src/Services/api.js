@@ -2,7 +2,7 @@ import axios from 'axios';
 import { store } from 'src/App/store';
 import { updateAccessToken, signOut } from 'src/Features/userSlice';
 
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -26,7 +26,7 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && !originalRequest._retry && !originalRequest.url?.includes('/auth/login')) {
       originalRequest._retry = true;
       const refreshToken = store.getState().user.loginInfo?.refreshToken;
 
@@ -61,6 +61,9 @@ export const productApi = {
   delete: (id) => api.delete(`/products/${id}`),
   getStats: () => api.get('/products/stats'),
   getReviews: (id) => api.get(`/products/${id}/reviews`),
+  getProductsByStatus: (status) => api.get(`/products/status/${status}`),
+  getProductsBySeller: (sellerId) => api.get(`/products/seller/${sellerId}`),
+  updateStatus: (id, status) => api.patch(`/products/${id}/status`, { status }),
   addReview: (id, review) => api.post(`/products/${id}/reviews`, review),
   updateReview: (id, review) => api.put(`/products/reviews/${id}`, review),
   deleteReview: (id) => api.delete(`/products/reviews/${id}`),
@@ -79,18 +82,19 @@ export const authApi = {
   updateUser: (id, userData) => api.put(`/users/${id}`, userData),
   getAllUsers: () => api.get('/users'),
   deleteUser: (id) => api.delete(`/users/${id}`),
-  sendOtp: (email) => api.post(`/auth/send-otp?email=${email}`),
-  verifyOtp: (email, code) => api.post(`/auth/verify-otp?email=${email}&code=${code}`),
+  sendOtp: (loginKey) => api.post('/auth/send-otp', null, { params: { loginKey } }),
+  verifyOtp: (loginKey, code) => api.post('/auth/verify-otp', null, { params: { loginKey, code } }),
   googleLogin: (idToken) => api.post('/auth/google', { idToken }),
-  resetPassword: (email, otp, newPassword) =>
-    api.post(`/auth/reset-password?email=${email}&otp=${otp}&newPassword=${encodeURIComponent(newPassword)}`),
+  resetPassword: (loginKey, otp, newPassword) =>
+    api.post('/auth/reset-password', null, { params: { loginKey, otp, newPassword } }),
 };
 
 export const orderApi = {
   create: (orderData) => api.post('/orders', orderData),
   getByUser: (userId) => api.get(`/orders/user/${userId}`),
   getAll: () => api.get('/orders'),
-  updateStatus: (id, status) => api.put(`/orders/${id}/status?status=${encodeURIComponent(status)}`),
+  updateStatus: (id, status) => api.put(`/orders/${id}/status`, null, { params: { status } }),
+  delete: (id) => api.delete(`/orders/${id}`),
 };
 
 export default api;

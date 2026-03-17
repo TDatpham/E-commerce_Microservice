@@ -15,17 +15,39 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @org.springframework.transaction.annotation.Transactional
     public User register(User user) {
+        if (user.getUsername() == null || user.getUsername().isBlank()) {
+            throw new RuntimeException("Username is required");
+        }
+        if (user.getPassword() == null || user.getPassword().isBlank()) {
+            throw new RuntimeException("Password is required");
+        }
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             throw new RuntimeException("Username already exists");
+        }
+        if (user.getEmail() != null && !user.getEmail().isBlank() && userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already exists");
+        }
+        if (user.getPhone() != null && !user.getPhone().isBlank() && userRepository.findByPhone(user.getPhone()).isPresent()) {
+            throw new RuntimeException("Phone number already exists");
+        }
+        if (user.getRole() == null || user.getRole().isBlank()) {
+            user.setRole("USER"); 
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
-    public Optional<User> login(String username, String password) {
-        return userRepository.findByUsername(username)
-                .filter(u -> passwordEncoder.matches(password, u.getPassword()));
+    public Optional<User> login(String loginKey, String password) {
+        Optional<User> user = userRepository.findByUsername(loginKey);
+        if (user.isEmpty()) {
+            user = userRepository.findByEmail(loginKey);
+        }
+        if (user.isEmpty()) {
+            user = userRepository.findByPhone(loginKey);
+        }
+        return user.filter(u -> passwordEncoder.matches(password, u.getPassword()));
     }
 
     public Optional<User> getUserById(Long id) {
@@ -36,19 +58,33 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
+    public Optional<User> findUserByAnyKey(String key) {
+        Optional<User> user = userRepository.findByUsername(key);
+        if (user.isEmpty()) user = userRepository.findByEmail(key);
+        if (user.isEmpty()) user = userRepository.findByPhone(key);
+        return user;
+    }
+
+    public String getEmailOfUser(String key) {
+        return findUserByAnyKey(key).map(User::getEmail).orElse(key.contains("@") ? key : null);
+    }
+
+    @org.springframework.transaction.annotation.Transactional
     public User update(Long id, User updatedUser) {
         return userRepository.findById(id).map(user -> {
-            user.setFullName(updatedUser.getFullName());
-            user.setEmail(updatedUser.getEmail());
-            user.setAddress(updatedUser.getAddress());
-            if (updatedUser.getRole() != null) {
-                user.setRole(updatedUser.getRole());
-            }
-            if (updatedUser.getUsername() != null) {
+            if (updatedUser.getFullName() != null) user.setFullName(updatedUser.getFullName());
+            if (updatedUser.getEmail() != null) user.setEmail(updatedUser.getEmail());
+            if (updatedUser.getAddress() != null) user.setAddress(updatedUser.getAddress());
+            if (updatedUser.getRole() != null) user.setRole(updatedUser.getRole());
+            
+            if (updatedUser.getUsername() != null && !updatedUser.getUsername().equals(user.getUsername())) {
+                if (userRepository.findByUsername(updatedUser.getUsername()).isPresent()) {
+                    throw new RuntimeException("Username '" + updatedUser.getUsername() + "' is already taken");
+                }
                 user.setUsername(updatedUser.getUsername());
             }
             return userRepository.save(user);
-        }).orElseThrow(() -> new RuntimeException("User not found"));
+        }).orElseThrow(() -> new RuntimeException("User not found with id: " + id));
     }
 
     public User processOAuthPostLogin(String email, String name) {
@@ -86,6 +122,9 @@ public class UserService {
 
     /** Admin: delete user by id. */
     public void delete(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new RuntimeException("User not found with id: " + id);
+        }
         userRepository.deleteById(id);
     }
 }

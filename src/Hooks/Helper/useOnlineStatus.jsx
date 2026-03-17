@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 const useOnlineStatus = () => {
-  const [isOnline, setIsOnline] = useState(false);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   function checkOnlineStatus() {
     setIsOnline(true);
@@ -12,15 +12,12 @@ const useOnlineStatus = () => {
   }
 
   useEffect(() => {
-    if (navigator.onLine) checkOnlineStatus();
-    else checkOfflineStatus();
-
     window.addEventListener("online", checkOnlineStatus);
     window.addEventListener("offline", checkOfflineStatus);
 
     return () => {
-      document.removeEventListener("online", checkOnlineStatus);
-      document.removeEventListener("offline", checkOfflineStatus);
+      window.removeEventListener("online", checkOnlineStatus);
+      window.removeEventListener("offline", checkOfflineStatus);
     };
   }, []);
 
@@ -28,3 +25,4 @@ const useOnlineStatus = () => {
 };
 
 export default useOnlineStatus;
+

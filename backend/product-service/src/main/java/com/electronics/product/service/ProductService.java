@@ -70,7 +70,15 @@ public class ProductService {
     }
 
     public List<Product> getAllProducts() {
-        return productRepository.findAll();
+        return productRepository.findByStatus("APPROVED");
+    }
+
+    public List<Product> getProductsByStatus(String status) {
+        return productRepository.findByStatus(status);
+    }
+
+    public List<Product> getProductsBySellerId(Long sellerId) {
+        return productRepository.findBySellerId(sellerId);
     }
 
     public Optional<Product> getProductById(Long id) {
@@ -82,25 +90,61 @@ public class ProductService {
     }
 
     public Product saveProduct(Product product) {
+        if (product.getAddedDate() == null || product.getAddedDate().isEmpty()) {
+            product.setAddedDate(java.time.LocalDateTime.now().toString());
+        }
+        if (product.getRate() == null) product.setRate(0.0);
+        if (product.getVotes() == null) product.setVotes(0);
+        if (product.getQuantity() == null) product.setQuantity(1);
+        if (product.getSold() == null) product.setSold(0);
+        if (product.getStockQuantity() == null) product.setStockQuantity(50);
+        if (product.getStatus() == null || product.getStatus().isEmpty()) {
+            product.setStatus("PENDING");
+        }
         return productRepository.save(product);
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public void reduceStock(java.util.List<java.util.Map<String, Object>> items) {
+        for (java.util.Map<String, Object> item : items) {
+            Long productId = Long.valueOf(item.get("productId").toString());
+            Integer quantity = Integer.valueOf(item.get("quantity").toString());
+
+            productRepository.findById(productId).ifPresent(product -> {
+                int currentStock = (product.getStockQuantity() != null) ? product.getStockQuantity() : 50;
+                int currentSold = (product.getSold() != null) ? product.getSold() : 0;
+                product.setStockQuantity(Math.max(0, currentStock - quantity));
+                product.setSold(currentSold + quantity);
+                productRepository.save(product);
+            });
+        }
     }
 
     public Product updateProduct(Long id, Product productDetails) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        product.setName(productDetails.getName());
-        product.setShortName(productDetails.getShortName());
-        product.setDescription(productDetails.getDescription());
-        product.setPrice(productDetails.getPrice());
-        product.setDiscount(productDetails.getDiscount());
-        product.setCategory(productDetails.getCategory());
-        product.setImg(productDetails.getImg());
-        product.setStockQuantity(productDetails.getStockQuantity());
-        product.setRate(productDetails.getRate());
-        product.setVotes(productDetails.getVotes());
-        product.setQuantity(productDetails.getQuantity());
-        product.setSold(productDetails.getSold());
+        if (productDetails.getName() != null) product.setName(productDetails.getName());
+        if (productDetails.getShortName() != null) product.setShortName(productDetails.getShortName());
+        if (productDetails.getDescription() != null) product.setDescription(productDetails.getDescription());
+        if (productDetails.getPrice() != null) product.setPrice(productDetails.getPrice());
+        if (productDetails.getDiscount() != null) product.setDiscount(productDetails.getDiscount());
+        if (productDetails.getCategory() != null) product.setCategory(productDetails.getCategory());
+        if (productDetails.getImg() != null) product.setImg(productDetails.getImg());
+        if (productDetails.getStockQuantity() != null) product.setStockQuantity(productDetails.getStockQuantity());
+        
+        // Don't overwrite stats with nulls if they weren't provided in the update request
+        if (productDetails.getRate() != null) product.setRate(productDetails.getRate());
+        if (productDetails.getVotes() != null) product.setVotes(productDetails.getVotes());
+        if (productDetails.getQuantity() != null) product.setQuantity(productDetails.getQuantity());
+        if (productDetails.getSold() != null) product.setSold(productDetails.getSold());
+        
+        if (productDetails.getStatus() != null) product.setStatus(productDetails.getStatus());
+        if (productDetails.getSellerId() != null) product.setSellerId(productDetails.getSellerId());
+
+        if (productDetails.getOtherImages() != null) product.setOtherImages(productDetails.getOtherImages());
+        if (productDetails.getColors() != null) product.setColors(productDetails.getColors());
+        if (productDetails.getSizes() != null) product.setSizes(productDetails.getSizes());
 
         return productRepository.save(product);
     }

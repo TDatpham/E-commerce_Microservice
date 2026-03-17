@@ -24,7 +24,7 @@ const useSessionGuard = () => {
             dispatch(clearUserProducts());
             dispatch(signOut());
         }
-    }, []); // Only run once on mount
+    }, [isSignIn, dispatch]); // Added missing dependencies
 };
 
 export default useSessionGuard;

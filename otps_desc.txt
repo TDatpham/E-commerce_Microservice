@@ -1,0 +1,6 @@
+﻿Field	Type	Null	Key	Default	Extra
+id	bigint	NO	PRI	NULL	auto_increment
+code	varchar(255)	YES		NULL	
+email	varchar(255)	YES		NULL	
+expiry_time	datetime(6)	YES		NULL	
+login_key	varchar(255)	YES		NULL	

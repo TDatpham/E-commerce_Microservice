@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 import { mobileNavData } from "src/Data/staticData";
-import { camelCase } from "src/Functions/helper";
+import { camelCase, isUserAdmin } from "src/Functions/helper";
 import SvgIcon from "../../MiniComponents/SvgIcon";
 import IconWithCountAndLabel from "../../NavTools/IconWithCountAndLabel/IconWithCountAndLabel";
 import s from "./NavLinksSideBar.module.scss";
@@ -20,7 +20,7 @@ const NavLinksSideBar = () => {
       <ul role="menu">
         {mobileNavData.map(({ name, link, icon, requiteSignIn, requireAdmin }, index) => {
           const isAdminItem = !!requireAdmin;
-          const isAdmin = role === "ADMIN" || role === "admin";
+          const isAdmin = isUserAdmin(role);
           const shouldShowBase = requiteSignIn ? isSignIn : true;
           const shouldShow = isAdminItem ? shouldShowBase && isAdmin : shouldShowBase;
           const currentPage =

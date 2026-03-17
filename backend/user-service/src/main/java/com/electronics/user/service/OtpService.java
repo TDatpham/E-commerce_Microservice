@@ -16,25 +16,31 @@ import java.util.Random;
 public class OtpService {
     private final OtpRepository otpRepository;
     private final JavaMailSender mailSender;
+    private final UserService userService;
 
     @Transactional
-    public String generateOtp(String email) {
-        otpRepository.deleteByEmail(email);
+    public String generateOtp(String loginKey) {
+        otpRepository.deleteByLoginKey(loginKey);
 
         String code = String.format("%06d", new Random().nextInt(999999));
         Otp otp = Otp.builder()
-                .email(email)
+                .loginKey(loginKey)
                 .code(code)
                 .expiryTime(LocalDateTime.now().plusMinutes(5))
                 .build();
 
         otpRepository.save(otp);
-        sendOtpEmail(email, code);
+        
+        String email = userService.getEmailOfUser(loginKey);
+        if (email != null && !email.isBlank()) {
+            sendOtpEmail(email, code);
+        }
+        
         return code;
     }
 
-    public boolean verifyOtp(String email, String code) {
-        return otpRepository.findByEmailAndCode(email, code)
+    public boolean verifyOtp(String loginKey, String code) {
+        return otpRepository.findByLoginKeyAndCode(loginKey, code)
                 .map(otp -> otp.getExpiryTime().isAfter(LocalDateTime.now()))
                 .orElse(false);
     }

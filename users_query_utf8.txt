@@ -1,0 +1,5 @@
+﻿id	username	email	role
+1	lily.wastons@gmail.com	lily.wastons@gmail.com	USER
+2	admin	admin@electronics.com	ADMIN
+3	phamthanhdat2003vl1@gmail.com	phamthanhdat2003vl1@gmail.com	USER
+4	2k3thanhdat2k3@gmail.com	2k3thanhdat2k3@gmail.com	USER

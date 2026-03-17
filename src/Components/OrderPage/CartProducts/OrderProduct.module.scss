@@ -85,3 +85,51 @@
     color: #721c24;
   }
 }
+
+.statusActions {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  button {
+    padding: 6px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--very-light-gray);
+    background-color: #fff;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+
+    &:hover:not(:disabled) {
+      background-color: var(--dark-tomato);
+      color: #fff;
+      border-color: var(--dark-tomato);
+    }
+
+    &:disabled {
+      cursor: default;
+      opacity: 0.6;
+    }
+  }
+}
+
+@include m.small {
+  .productContainer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .product {
+    width: 100% !important;
+  }
+
+  .status {
+    width: 100%;
+  }
+
+  .statusActions {
+    justify-content: flex-start;
+  }
+}

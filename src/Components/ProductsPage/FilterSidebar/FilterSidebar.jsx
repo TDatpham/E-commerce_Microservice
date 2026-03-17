@@ -5,7 +5,6 @@ const FilterSidebar = ({
     filters,
     setFilters,
     categories = [],
-    availableColors = []
 }) => {
     const { t } = useTranslation();
 
@@ -21,19 +20,11 @@ const FilterSidebar = ({
         setFilters({ ...filters, [name]: value });
     };
 
-    const toggleColor = (color) => {
-        const newColors = filters.colors.includes(color)
-            ? filters.colors.filter(c => c !== color)
-            : [...filters.colors, color];
-        setFilters({ ...filters, colors: newColors });
-    };
-
     const resetFilters = () => {
         setFilters({
             categories: [],
             minPrice: "",
             maxPrice: "",
-            colors: []
         });
     };
 
@@ -77,23 +68,6 @@ const FilterSidebar = ({
                             onChange={handlePriceChange}
                         />
                     </div>
-                </div>
-            </div>
-
-            <div className={s.filterSection}>
-                <h4>{t("productsPage.filterColor") || "Colors"}</h4>
-                <div className={s.colorList}>
-                    {availableColors.map((color) => (
-                        <div
-                            key={color}
-                            className={`${s.colorOption} ${filters.colors.includes(color) ? s.active : ""}`}
-                            style={{ backgroundColor: color }}
-                            onClick={() => toggleColor(color)}
-                            title={color}
-                        >
-                            {filters.colors.includes(color) && <span className={s.check}>✓</span>}
-                        </div>
-                    ))}
                 </div>
             </div>
 

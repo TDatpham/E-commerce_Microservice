@@ -5,6 +5,7 @@ import { initReactI18next } from "react-i18next";
 
 const i18nConfig = {
   compatibilityJSON: "v3",
+  lng: "en",
   fallbackLng: "en",
   returnObjects: true,
   detection: {

@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 import { SCREEN_SIZES } from "src/Data/globalVariables";
+import { isUserAdmin } from "src/Functions/helper";
 import useGetResizeWindow from "src/Hooks/Helper/useGetResizeWindow";
 import AccountMenuCloseBtn from "./AccountMenuCloseBtn/AccountMenuCloseBtn";
 import AccountMenuIcon from "./AccountMenuIcon";
@@ -9,8 +10,11 @@ import s from "./AccountMenuSection.module.scss";
 
 const AccountMenuSection = () => {
   const { isProfileMenuActive } = useSelector((state) => state.global);
+  const { loginInfo } = useSelector((state) => state.user);
+  const userRole = loginInfo?.role;
   const { windowWidth } = useGetResizeWindow();
   const { t } = useTranslation();
+
   const isMobileDevice = windowWidth < SCREEN_SIZES.tablet;
   const mobileClass = isMobileDevice ? s.mobile : "";
   const activeClass = isProfileMenuActive ? s.active : "";
@@ -43,6 +47,17 @@ const AccountMenuSection = () => {
           </ul>
         </section>
 
+        {isUserAdmin(userRole) && (
+          <section className={s.section}>
+            <h2>Admin</h2>
+            <ul>
+              <li>
+                <NavLink to="/admin">Admin Dashboard</NavLink>
+              </li>
+            </ul>
+          </section>
+        )}
+
         <section className={s.section}>
           <h2>{t(`${accountMenu}.myOrders`)}</h2>
 
@@ -61,3 +76,4 @@ const AccountMenuSection = () => {
   );
 };
 export default AccountMenuSection;
+

@@ -162,17 +162,3 @@ function showEmptyCartAlert(dispatch, t) {
     })
   );
 }
-
-function finalizeOrder(dispatch, t) {
-  dispatch(transferProducts({ from: "cartProducts", to: "orderProducts" }));
-
-  setTimeout(() => {
-    dispatch(
-      showAlert({
-        alertState: "success",
-        alertText: t("toastAlert.checkoutSuccess"),
-        alertType: "alert",
-      })
-    );
-  }, 600);
-}

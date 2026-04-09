@@ -1,12 +1,7 @@
 services:
-  # 1. Discovery Service (Eureka)
   - type: web
     name: discovery-service
-<<<<<<< HEAD
     runtime: docker
-=======
-    runtime: docker # Đổi thành runtime để tương thích tốt hơn
->>>>>>> 9de46f5e08c9d62217dea09ad4d15bc2f6c1e55c
     dockerContext: backend
     dockerfilePath: discovery-service/Dockerfile
     plan: free
@@ -14,7 +9,6 @@ services:
       - key: SERVER_PORT
         value: "8761"
 
-  # 2. API Gateway
   - type: web
     name: api-gateway
     runtime: docker
@@ -30,7 +24,6 @@ services:
       - key: ALLOWED_ORIGINS
         sync: false
 
-  # 3. Product Service
   - type: web
     name: product-service
     runtime: docker
@@ -51,7 +44,6 @@ services:
       - key: SPRING_KAFKA_BOOTSTRAP_SERVERS
         value: localhost:9092
 
-  # 4. User Service
   - type: web
     name: user-service
     runtime: docker
@@ -70,7 +62,6 @@ services:
       - key: SPRING_DATASOURCE_PASSWORD
         sync: false
 
-  # 5. Order Service
   - type: web
     name: order-service
     runtime: docker

@@ -6,12 +6,13 @@ services:
     dockerContext: backend
     dockerfilePath: Dockerfile
     plan: free
-    dockerBuildArgs:
-      SERVICE_NAME: discovery-service
-      PORT: 8761
     envVars:
+      - key: SERVICE_NAME
+        value: discovery-service
+      - key: PORT
+        value: "8761"
       - key: SERVER_PORT
-        value: 8761
+        value: "8761"
 
   # 2. API Gateway
   - type: web
@@ -20,13 +21,14 @@ services:
     dockerContext: backend
     dockerfilePath: Dockerfile
     plan: free
-    dockerBuildArgs:
-      SERVICE_NAME: api-gateway
-      PORT: 8080
     healthCheckPath: /actuator/health
     envVars:
+      - key: SERVICE_NAME
+        value: api-gateway
+      - key: PORT
+        value: "8080"
       - key: SERVER_PORT
-        value: 8080
+        value: "8080"
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
         value: http://discovery-service:8761/eureka/
       - key: ALLOWED_ORIGINS
@@ -39,12 +41,13 @@ services:
     dockerContext: backend
     dockerfilePath: Dockerfile
     plan: free
-    dockerBuildArgs:
-      SERVICE_NAME: product-service
-      PORT: 8081
     envVars:
+      - key: SERVICE_NAME
+        value: product-service
+      - key: PORT
+        value: "8081"
       - key: SERVER_PORT
-        value: 8081
+        value: "8081"
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
         value: http://discovery-service:8761/eureka/
       - key: SPRING_DATASOURCE_URL
@@ -63,12 +66,13 @@ services:
     dockerContext: backend
     dockerfilePath: Dockerfile
     plan: free
-    dockerBuildArgs:
-      SERVICE_NAME: user-service
-      PORT: 8082
     envVars:
+      - key: SERVICE_NAME
+        value: user-service
+      - key: PORT
+        value: "8082"
       - key: SERVER_PORT
-        value: 8082
+        value: "8082"
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
         value: http://discovery-service:8761/eureka/
       - key: SPRING_DATASOURCE_URL
@@ -85,12 +89,13 @@ services:
     dockerContext: backend
     dockerfilePath: Dockerfile
     plan: free
-    dockerBuildArgs:
-      SERVICE_NAME: order-service
-      PORT: 8083
     envVars:
+      - key: SERVICE_NAME
+        value: order-service
+      - key: PORT
+        value: "8083"
       - key: SERVER_PORT
-        value: 8083
+        value: "8083"
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
         value: http://discovery-service:8761/eureka/
       - key: SPRING_DATASOURCE_URL

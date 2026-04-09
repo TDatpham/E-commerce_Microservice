@@ -2,7 +2,11 @@ services:
   # 1. Discovery Service (Eureka)
   - type: web
     name: discovery-service
+<<<<<<< HEAD
     runtime: docker
+=======
+    runtime: docker # Đổi thành runtime để tương thích tốt hơn
+>>>>>>> 9de46f5e08c9d62217dea09ad4d15bc2f6c1e55c
     dockerContext: backend
     dockerfilePath: discovery-service/Dockerfile
     plan: free

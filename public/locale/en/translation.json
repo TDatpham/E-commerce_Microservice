@@ -132,6 +132,14 @@
     "filterCategory": "Categories",
     "filterPrice": "Price Range",
     "filterColor": "Colors",
+    "filterBrand": "Brands",
+    "filterSize": "Sizes",
+    "sortBy": "Sort By",
+    "sortDefault": "Default",
+    "sortPriceLowHigh": "Price: Low to High",
+    "sortPriceHighLow": "Price: High to Low",
+    "sortRating": "Rating (Stars)",
+    "sortDiscount": "Discount",
     "resetFilters": "Reset Filters",
     "prev": "Prev",
     "next": "Next"
@@ -170,7 +178,11 @@
     "submitReview": "Submit review",
     "commentsTitle": "Comments",
     "noCommentsYet": "No comments yet. Be the first to review!",
-    "loadMore": "Load More Comments"
+    "brand": "Brand",
+    "loadMore": "Load More Comments",
+    "collapse": "Collapse",
+    "seeAll": "See All Comments",
+    "relatedProducts": "Related Products"
   },
   "common": {
     "facebook": "Facebook",

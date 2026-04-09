@@ -71,6 +71,7 @@ export const productsData = [
     shortName: "PS5 Gamepad",
     name: "PS5 Gamepad",
     category: "gaming",
+    brand: "Sony",
     price: 69.99,
     discount: 40,
     description: `
@@ -105,6 +106,7 @@ export const productsData = [
     shortName: "AK-9000 Keyboard",
     name: "AK-900 Wired Keyboard",
     category: "gaming",
+    brand: "Logitech",
     price: 8.66,
     discount: 35,
     description: `
@@ -138,6 +140,7 @@ export const productsData = [
     shortName: "LCD Monitor",
     name: "IPS LCD Gaming Monitor",
     category: "gaming",
+    brand: "ASUS",
     price: 244.8,
     discount: 30,
     description: `
@@ -171,6 +174,7 @@ export const productsData = [
     shortName: "S-Series Chair",
     name: "S-Series Comfort Chair",
     category: "furniture",
+    brand: "Secretlab",
     price: 39.99,
     discount: 25,
     description: `
@@ -215,6 +219,7 @@ export const productsData = [
     shortName: "North Coat",
     name: "The north coat",
     category: "clothes",
+    brand: "The North Face",
     price: 89.99,
     discount: 40,
     description: `
@@ -251,6 +256,7 @@ export const productsData = [
     shortName: "Gucci Bag",
     name: "Gucci duffle bag",
     category: "backpack",
+    brand: "Gucci",
     price: 2980,
     discount: 10,
     description: `
@@ -287,6 +293,7 @@ export const productsData = [
     shortName: "CPU Cooler",
     name: "RGB liquid CPU Cooler",
     category: "gaming",
+    brand: "Cooler Master",
     price: 139,
     discount: 30,
     description: `
@@ -319,6 +326,7 @@ export const productsData = [
     shortName: "BookShelf",
     name: "Small BookShelf",
     category: "furniture",
+    brand: "IKEA",
     price: 45.99,
     discount: 15,
     description: `
@@ -350,6 +358,7 @@ export const productsData = [
     shortName: "Dog Food",
     name: "Breed Dry Dog Food",
     category: "animal",
+    brand: "Purina",
     price: 17.99,
     discount: 0,
     description: `
@@ -386,6 +395,7 @@ export const productsData = [
     shortName: "Cannon Camera",
     name: "CANON EOS DSLR Camera",
     category: "camera",
+    brand: "Canon",
     price: 6499,
     discount: 0,
     description: `
@@ -418,6 +428,7 @@ export const productsData = [
     shortName: "FHD Laptop",
     name: "ASUS FHD Gaming Laptop",
     category: "computers",
+    brand: "ASUS",
     price: 767.99,
     discount: 5,
     description: `
@@ -450,6 +461,7 @@ export const productsData = [
     shortName: "Curology",
     name: "Curology Product Set",
     category: "makeup",
+    brand: "Curology",
     price: 24.99,
     discount: 0,
     description: `

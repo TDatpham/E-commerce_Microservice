@@ -56,12 +56,22 @@ export function translateProduct({
   translateKey,
   uppercase = false,
   dynamicData = {},
+  fallbackValue,
 }) {
   const shortNameKey = productName?.replaceAll(" ", "");
   const productTrans = `products.${shortNameKey}`;
-  const translateText = translateMethod(
-    `${productTrans}.${translateKey}`,
-    dynamicData
-  );
-  return uppercase ? translateText.toUpperCase() : translateText;
+  const key = `${productTrans}.${translateKey}`;
+  let translateText = translateMethod(key, dynamicData);
+
+  if (translateText === key) {
+    if (fallbackValue !== undefined) {
+      translateText = fallbackValue;
+    } else if (translateKey === "shortName" || translateKey === "name") {
+      translateText = productName;
+    } else {
+      translateText = "";
+    }
+  }
+
+  return uppercase ? (translateText?.toUpperCase() || "") : translateText;
 }

@@ -41,6 +41,7 @@ public class Product {
     private Integer votes = 0;
     private Integer quantity = 1;
     private Integer sold = 0;
+    private String brand;
 
     private String status = "PENDING"; // APPROVED, PENDING, REJECTED
     private Long sellerId;

@@ -24,8 +24,11 @@ const ProductsPage = () => {
 
   const [filters, setFilters] = useState({
     categories: [],
+    colors: [],
+    sizes: [],
     minPrice: "",
     maxPrice: "",
+    sortBy: "default",
   });
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -40,18 +43,47 @@ const ProductsPage = () => {
   });
   useScrollOnMount(200);
 
-  const availableCategories = useMemo(() => {
+  const { availableCategories, availableBrands, availableColors, availableSizes } = useMemo(() => {
     const cats = new Set();
+    const brands = new Set();
+    const colors = new Map(); // Use map to store unique color objects by name
+    const sizes = new Set();
+    
     products.forEach(p => {
       if (p.category) cats.add(p.category);
+      if (p.colors) {
+        p.colors.forEach(c => {
+          if (c.name) colors.set(c.name, c);
+        });
+      }
+      if (p.sizes) {
+        p.sizes.forEach(s => sizes.add(s));
+      }
     });
-    return Array.from(cats).sort();
+
+    return {
+      availableCategories: Array.from(cats).sort(),
+      availableColors: Array.from(colors.values()).sort((a, b) => a.name.localeCompare(b.name)),
+      availableSizes: Array.from(sizes).sort(),
+    };
   }, [products]);
 
   const filteredProducts = useMemo(() => {
-    return products.filter(p => {
+    let result = products.filter(p => {
       // Category filter
       if (filters.categories.length > 0 && !filters.categories.includes(p.category)) return false;
+
+      // Color filter
+      if (filters.colors.length > 0) {
+        const productColors = p.colors?.map(c => c.name) || [];
+        if (!filters.colors.some(c => productColors.includes(c))) return false;
+      }
+
+      // Size filter
+      if (filters.sizes.length > 0) {
+        const productSizes = p.sizes || [];
+        if (!filters.sizes.some(s => productSizes.includes(s))) return false;
+      }
 
       // Price filter
       const price = parseFloat(p.afterDiscount);
@@ -60,6 +92,19 @@ const ProductsPage = () => {
 
       return true;
     });
+
+    // Sorting logic
+    if (filters.sortBy === "priceLowHigh") {
+      result.sort((a, b) => parseFloat(a.afterDiscount) - parseFloat(b.afterDiscount));
+    } else if (filters.sortBy === "priceHighLow") {
+      result.sort((a, b) => parseFloat(b.afterDiscount) - parseFloat(a.afterDiscount));
+    } else if (filters.sortBy === "rating") {
+      result.sort((a, b) => (b.rate || 0) - (a.rate || 0));
+    } else if (filters.sortBy === "discount") {
+      result.sort((a, b) => (b.discount || 0) - (a.discount || 0));
+    }
+
+    return result;
   }, [products, filters]);
 
   const paginatedProducts = useMemo(() => {
@@ -94,6 +139,8 @@ const ProductsPage = () => {
               setCurrentPage(1); // Reset to first page on filter change
             }}
             categories={availableCategories}
+            colors={availableColors}
+            sizes={availableSizes}
           />
 
           <section className={s.productsColumn}>

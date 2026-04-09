@@ -1,13 +1,11 @@
 package com.electronics.product;
 
 import com.electronics.product.model.Product;
-import com.electronics.product.model.Review;
 import com.electronics.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -17,81 +15,296 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         if (productService.getAllProducts().isEmpty()) {
+
+            Product p0 = new Product();
+            p0.setName("PS5 Gamepad");
+            p0.setShortName("PS5 Gamepad");
+            p0.setCategory("gaming");
+            p0.setBrand("Sony");
+            p0.setPrice(69.99D);
+            p0.setDiscount(40);
+            p0.setDescription("PlayStation 5 Controller Skin High quality vinyl with air channel adhesive for easy bubble free install & mess free removal Pressure sensitive.");
+            p0.setAddedDate("2024/2/2");
+            p0.setImg("ps5Gamepad");
+            p0.setRate(5D);
+            p0.setVotes(88);
+            p0.setSold(105);
+            p0.setStockQuantity(100);
+            p0.setStatus("APPROVED");
+            p0.setColors(java.util.List.of(new com.electronics.product.model.ProductColor(null, "ice blue", "#dcdfea"), new com.electronics.product.model.ProductColor(null, "black", "#27292d")));
+            productService.saveProduct(p0);
+
             Product p1 = new Product();
-            p1.setName("PS5 Gamepad");
-            p1.setShortName("PS5 Gamepad");
-            p1.setCategory("Gaming");
-            p1.setPrice(69.99);
-            p1.setDiscount(40);
-            p1.setDescription("PlayStation 5 Controller Skin High quality vinyl...");
-            p1.setAddedDate("2024/2/2");
-            p1.setImg("ps5Gamepad");
-            p1.setRate(4.8);
-            p1.setVotes(88);
-            p1.setSold(105);
+            p1.setName("AK-900 Wired Keyboard");
+            p1.setShortName("AK-9000 Keyboard");
+            p1.setCategory("gaming");
+            p1.setBrand("Logitech");
+            p1.setPrice(8.66D);
+            p1.setDiscount(35);
+            p1.setDescription("Elevate your gaming experience with the AK-900 Wired Keyboard. Designed for precision and durability, this keyboard boasts high responsiveness and tactile feedback. Its sleek design and customizable RGB lighting make it a stylish addition to any gaming setup. Whether you're gaming competitively or typing up reports, the AK-900 ensures peak performance with every keystroke.");
+            p1.setAddedDate("2024/2/7");
+            p1.setImg("wiredKeyboard");
+            p1.setRate(4D);
+            p1.setVotes(75);
+            p1.setSold(210);
             p1.setStockQuantity(100);
             p1.setStatus("APPROVED");
-            p1.setColors(java.util.List.of(
-                    new com.electronics.product.model.ProductColor(null, "White", "#FFFFFF"),
-                    new com.electronics.product.model.ProductColor(null, "Black", "#000000")));
+            p1.setColors(java.util.List.of(new com.electronics.product.model.ProductColor(null, "black", "#03040f")));
             productService.saveProduct(p1);
 
             Product p2 = new Product();
-            p2.setName("AK-900 Wired Keyboard");
-            p2.setShortName("AK-9000 Keyboard");
-            p2.setCategory("Gaming");
-            p2.setPrice(85.00);
-            p2.setDiscount(35);
-            p2.setDescription("Elevate your gaming experience with the AK-900 Wired Keyboard...");
-            p2.setAddedDate("2024/2/7");
-            p2.setImg("wiredKeyboard");
-            p2.setRate(4.5);
-            p2.setVotes(75);
-            p2.setSold(210);
-            p2.setStockQuantity(50);
+            p2.setName("IPS LCD Gaming Monitor");
+            p2.setShortName("LCD Monitor");
+            p2.setCategory("gaming");
+            p2.setBrand("ASUS");
+            p2.setPrice(244.8D);
+            p2.setDiscount(30);
+            p2.setDescription("Immerse yourself in the world of gaming with the IPS LCD Gaming Monitor. Featuring stunning visuals and ultra-smooth gameplay, this monitor delivers an unparalleled gaming experience. With its high refresh rate and low input lag, you'll never miss a frame. Whether you're battling foes or exploring vast worlds, the IPS LCD Gaming Monitor brings every detail to life with vibrant colors and crisp clarity.");
+            p2.setAddedDate("2024/3/15");
+            p2.setImg("gamingMonitor");
+            p2.setRate(5D);
+            p2.setVotes(99);
+            p2.setSold(463);
+            p2.setStockQuantity(100);
             p2.setStatus("APPROVED");
-            p2.setColors(java.util.List.of(
-                    new com.electronics.product.model.ProductColor(null, "RGB", "#FF00FF")));
+            p2.setColors(java.util.List.of(new com.electronics.product.model.ProductColor(null, "black", "#151515")));
             productService.saveProduct(p2);
 
             Product p3 = new Product();
-            p3.setName("Iphone 14 series");
-            p3.setShortName("Iphone 14 series");
-            p3.setCategory("Phones");
-            p3.setPrice(999.0);
-            p3.setDiscount(10);
-            p3.setDescription("Advanced dual-camera system. All-day battery life.");
-            p3.setAddedDate("2024/1/15");
-            p3.setImg("iphoneImg");
-            p3.setRate(4.9);
-            p3.setVotes(120);
-            p3.setSold(50);
-            p3.setStockQuantity(30);
+            p3.setName("S-Series Comfort Chair");
+            p3.setShortName("S-Series Chair");
+            p3.setCategory("furniture");
+            p3.setBrand("Secretlab");
+            p3.setPrice(39.99D);
+            p3.setDiscount(25);
+            p3.setDescription("Experience comfort like never before with the S-Series Comfort Chair. Crafted with plush padding and ergonomic design, this chair provides exceptional support during long gaming sessions or work hours. Its sleek and modern aesthetic adds a touch of sophistication to any space. Say goodbye to discomfort and hello to relaxation with the S-Series Comfort Chair.");
+            p3.setAddedDate("2024/1/1");
+            p3.setImg("comfortChair");
+            p3.setRate(4.5D);
+            p3.setVotes(99);
+            p3.setSold(211);
+            p3.setStockQuantity(100);
             p3.setStatus("APPROVED");
-            p3.setColors(java.util.List.of(
-                    new com.electronics.product.model.ProductColor(null, "Purple", "#A590D0"),
-                    new com.electronics.product.model.ProductColor(null, "Midnight", "#1A1A1A")));
+            p3.setColors(java.util.List.of(new com.electronics.product.model.ProductColor(null, "ice blue", "#d3d7dc"), new com.electronics.product.model.ProductColor(null, "gray", "#858080"), new com.electronics.product.model.ProductColor(null, "brown", "#433636"), new com.electronics.product.model.ProductColor(null, "custom", "#b4a9a8")));
             productService.saveProduct(p3);
 
             Product p4 = new Product();
-            p4.setName("Canon EOS DSLR Camera");
-            p4.setShortName("Cannon Camera");
-            p4.setCategory("Camera");
-            p4.setPrice(6499.0);
-            p4.setDiscount(0);
-            p4.setDescription("Capture life's precious moments with the CANON EOS DSLR Camera.");
+            p4.setName("The north coat");
+            p4.setShortName("North Coat");
+            p4.setCategory("clothes");
+            p4.setBrand("The North Face");
+            p4.setPrice(89.99D);
+            p4.setDiscount(40);
+            p4.setDescription("Stay warm and stylish with The North Coat. Made from premium materials and expert craftsmanship, this coat is designed to withstand the elements while keeping you cozy. Its timeless design and versatile color make it a wardrobe essential for any season. Whether you're braving the outdoors or running errands in the city, The North Coat is sure to turn heads wherever you go.");
             p4.setAddedDate("2024/3/7");
-            p4.setImg("canonCamera");
-            p4.setRate(4.0);
-            p4.setVotes(94);
-            p4.setSold(83);
-            p4.setStockQuantity(15);
+            p4.setImg("northCoat");
+            p4.setRate(5D);
+            p4.setVotes(65);
+            p4.setSold(1405);
+            p4.setStockQuantity(100);
             p4.setStatus("APPROVED");
-            p4.setColors(java.util.List.of(
-                    new com.electronics.product.model.ProductColor(null, "Black", "#000000")));
+            p4.setColors(java.util.List.of(new com.electronics.product.model.ProductColor(null, "pink", "#fa6a96"), new com.electronics.product.model.ProductColor(null, "light pink", "#ffb0ab"), new com.electronics.product.model.ProductColor(null, "dark blue", "#29518a")));
             productService.saveProduct(p4);
 
-            System.out.println("Initialized sample products with colors and stock.");
+            Product p5 = new Product();
+            p5.setName("Gucci duffle bag");
+            p5.setShortName("Gucci Bag");
+            p5.setCategory("backpack");
+            p5.setBrand("Gucci");
+            p5.setPrice(2980D);
+            p5.setDiscount(10);
+            p5.setDescription("Make a statement with the Gucci Duffle Bag. Crafted from luxurious materials and adorned with iconic branding, this bag exudes sophistication and style. With its spacious interior and multiple compartments, it's perfect for storing all your essentials in organized fashion. Whether you're traveling in first-class or hitting the gym, the Gucci Duffle Bag is the epitome of luxury and functionality.");
+            p5.setAddedDate("2022/9/15");
+            p5.setImg("gucciBag");
+            p5.setRate(3.5D);
+            p5.setVotes(159);
+            p5.setSold(1533);
+            p5.setStockQuantity(100);
+            p5.setStatus("APPROVED");
+            p5.setColors(java.util.List.of(new com.electronics.product.model.ProductColor(null, "Tan", "#ae9c89"), new com.electronics.product.model.ProductColor(null, "light grayish", "#c1bab1"), new com.electronics.product.model.ProductColor(null, "brown", "#987553")));
+            productService.saveProduct(p5);
+
+            Product p6 = new Product();
+            p6.setName("RGB liquid CPU Cooler");
+            p6.setShortName("CPU Cooler");
+            p6.setCategory("gaming");
+            p6.setBrand("Cooler Master");
+            p6.setPrice(139D);
+            p6.setDiscount(30);
+            p6.setDescription("Keep your CPU running cool and quiet with the RGB Liquid CPU Cooler. Featuring advanced cooling technology and customizable RGB lighting, this cooler not only keeps temperatures low but also adds a touch of flair to your build. Its sleek design and high-performance capabilities make it a must-have for any gaming rig or workstation. Say goodbye to overheating and hello to peak performance with the RGB Liquid CPU Cooler.");
+            p6.setAddedDate("2024/3/7");
+            p6.setImg("cpuCooler");
+            p6.setRate(4.5D);
+            p6.setVotes(190);
+            p6.setSold(2522);
+            p6.setStockQuantity(100);
+            p6.setStatus("APPROVED");
+            p6.setColors(java.util.List.of(new com.electronics.product.model.ProductColor(null, "gray", "#8e8e8e"), new com.electronics.product.model.ProductColor(null, "black", "#0e0e0e")));
+            productService.saveProduct(p6);
+
+            Product p7 = new Product();
+            p7.setName("Small BookShelf");
+            p7.setShortName("BookShelf");
+            p7.setCategory("furniture");
+            p7.setBrand("IKEA");
+            p7.setPrice(45.99D);
+            p7.setDiscount(15);
+            p7.setDescription("Organize your library in style with the Small Bookshelf. Crafted from durable materials and featuring a compact design, this bookshelf maximizes storage space without sacrificing aesthetics. Whether you're displaying your favorite novels or showcasing decorative items, its minimalist design seamlessly blends with any décor. Say goodbye to clutter and hello to sophistication with the Small Bookshelf.");
+            p7.setAddedDate("2023/12/22");
+            p7.setImg("bookshelf");
+            p7.setRate(5D);
+            p7.setVotes(201);
+            p7.setSold(1602);
+            p7.setStockQuantity(100);
+            p7.setStatus("APPROVED");
+            p7.setColors(java.util.List.of(new com.electronics.product.model.ProductColor(null, "tan", "#c08e56"), new com.electronics.product.model.ProductColor(null, "light yellow", "#ffdd9e")));
+            productService.saveProduct(p7);
+
+            Product p8 = new Product();
+            p8.setName("Breed Dry Dog Food");
+            p8.setShortName("Dog Food");
+            p8.setCategory("animal");
+            p8.setBrand("Purina");
+            p8.setPrice(17.99D);
+            p8.setDiscount(0);
+            p8.setDescription("Treat your furry friend to the best with Breed Dry Dog Food. Formulated with premium ingredients and essential nutrients, this dog food provides complete and balanced nutrition for dogs of all ages and breeds. Its delicious flavor and crunchy texture will have your dog begging for more. Say goodbye to mealtime struggles and hello to happy, healthy dogs with Breed Dry Dog Food.");
+            p8.setAddedDate("2024/3/7");
+            p8.setImg("dogFood");
+            p8.setRate(3D);
+            p8.setVotes(35);
+            p8.setSold(59);
+            p8.setStockQuantity(100);
+            p8.setStatus("APPROVED");
+            p8.setColors(java.util.List.of(new com.electronics.product.model.ProductColor(null, "purple", "#c212ad"), new com.electronics.product.model.ProductColor(null, "yellow", "#f59501"), new com.electronics.product.model.ProductColor(null, "red", "#d61421")));
+            productService.saveProduct(p8);
+
+            Product p9 = new Product();
+            p9.setName("CANON EOS DSLR Camera");
+            p9.setShortName("Cannon Camera");
+            p9.setCategory("camera");
+            p9.setBrand("Canon");
+            p9.setPrice(6499D);
+            p9.setDiscount(0);
+            p9.setDescription("Capture life's precious moments with the CANON EOS DSLR Camera. Whether you're a professional photographer or an amateur enthusiast, this camera delivers stunning image quality and performance. With its advanced features and intuitive controls, you can unleash your creativity and take your photography to the next level. Say goodbye to blurry shots and hello to crystal-clear images with the CANON EOS DSLR Camera.");
+            p9.setAddedDate("2024/3/7");
+            p9.setImg("canonCamera");
+            p9.setRate(4D);
+            p9.setVotes(94);
+            p9.setSold(83);
+            p9.setStockQuantity(100);
+            p9.setStatus("APPROVED");
+            p9.setColors(java.util.List.of(new com.electronics.product.model.ProductColor(null, "black", "#000201")));
+            productService.saveProduct(p9);
+
+            Product p10 = new Product();
+            p10.setName("ASUS FHD Gaming Laptop");
+            p10.setShortName("FHD Laptop");
+            p10.setCategory("computers");
+            p10.setBrand("ASUS");
+            p10.setPrice(767.99D);
+            p10.setDiscount(5);
+            p10.setDescription("Experience unparalleled gaming performance with the ASUS FHD Gaming Laptop. Powered by cutting-edge hardware and featuring a stunning Full HD display, this laptop is built to handle even the most demanding games with ease. Its sleek design and lightweight construction make it the perfect companion for gaming on the go. Say goodbye to lag and hello to smooth gameplay with the ASUS FHD Gaming Laptop.");
+            p10.setAddedDate("2024/3/7");
+            p10.setImg("gamingLaptop");
+            p10.setRate(4.5D);
+            p10.setVotes(1049);
+            p10.setSold(1792);
+            p10.setStockQuantity(100);
+            p10.setStatus("APPROVED");
+            p10.setColors(java.util.List.of(new com.electronics.product.model.ProductColor(null, "black", "#0c0c0c")));
+            productService.saveProduct(p10);
+
+            Product p11 = new Product();
+            p11.setName("Curology Product Set");
+            p11.setShortName("Curology");
+            p11.setCategory("makeup");
+            p11.setBrand("Curology");
+            p11.setPrice(24.99D);
+            p11.setDiscount(0);
+            p11.setDescription("Transform your skincare routine with the Curology Product Set. Formulated by dermatologists and tailored to your unique skin needs, this set includes everything you need to achieve clear, radiant skin. From cleansers to serums, each product is designed to target specific concerns and deliver visible results. Say goodbye to dull, uneven skin and hello to a complexion that glows with health and vitality with the Curology Product Set.");
+            p11.setAddedDate("2024/3/7");
+            p11.setImg("curology");
+            p11.setRate(5D);
+            p11.setVotes(325);
+            p11.setSold(100);
+            p11.setStockQuantity(100);
+            p11.setStatus("APPROVED");
+            p11.setColors(java.util.List.of(new com.electronics.product.model.ProductColor(null, "dark blue", "#000a2d"), new com.electronics.product.model.ProductColor(null, "white", "#def1f8")));
+            productService.saveProduct(p11);
+
+            Product p12 = new Product();
+            p12.setName("Kids Electric Car");
+            p12.setShortName("Electric Car");
+            p12.setCategory("gaming");
+            p12.setBrand("No Brand");
+            p12.setPrice(399.99D);
+            p12.setDiscount(0);
+            p12.setDescription("Spark your child's imagination with the Kids Electric Car. Designed for fun and excitement, this car features realistic details and effortless controls that make every ride an adventure. Whether they're cruising around the neighborhood or exploring the backyard, the Kids Electric Car provides hours of entertainment for children of all ages. Say goodbye to boredom and hello to endless fun with the Kids Electric Car.");
+            p12.setAddedDate("2024/3/7");
+            p12.setImg("kidsCar");
+            p12.setRate(3D);
+            p12.setVotes(22);
+            p12.setSold(100);
+            p12.setStockQuantity(100);
+            p12.setStatus("APPROVED");
+            p12.setColors(java.util.List.of(new com.electronics.product.model.ProductColor(null, "red", "#ff6066"), new com.electronics.product.model.ProductColor(null, "black", "#000201"), new com.electronics.product.model.ProductColor(null, "white", "#dcdcdc")));
+            productService.saveProduct(p12);
+
+            Product p13 = new Product();
+            p13.setName("Jr. Zoom Soccer Cleats");
+            p13.setShortName("Soccer Cleats");
+            p13.setCategory("clothes");
+            p13.setBrand("No Brand");
+            p13.setPrice(44.99D);
+            p13.setDiscount(0);
+            p13.setDescription("Take your game to the next level with Jr. Zoom Soccer Cleats. Engineered for speed and agility, these cleats deliver exceptional traction and stability on the field. With their lightweight design and responsive cushioning, you'll feel unstoppable from kickoff to the final whistle. Say goodbye to slips and slides and hello to peak performance with Jr. Zoom Soccer Cleats.");
+            p13.setAddedDate("2024/3/7");
+            p13.setImg("soccerCleats");
+            p13.setRate(4D);
+            p13.setVotes(145);
+            p13.setSold(100);
+            p13.setStockQuantity(100);
+            p13.setStatus("APPROVED");
+            p13.setColors(java.util.List.of(new com.electronics.product.model.ProductColor(null, "yellow", "#edfe7c"), new com.electronics.product.model.ProductColor(null, "black", "#131615")));
+            productService.saveProduct(p13);
+
+            Product p14 = new Product();
+            p14.setName("GP11 Shooter USB Gamepad");
+            p14.setShortName("GP11 Gamepad");
+            p14.setCategory("gaming");
+            p14.setBrand("No Brand");
+            p14.setPrice(13.86D);
+            p14.setDiscount(0);
+            p14.setDescription("Dominate the competition with the GP11 Shooter USB Gamepad. Designed for precision and comfort, this gamepad delivers an immersive gaming experience with every press and swipe. Whether you're battling enemies or racing against the clock, its ergonomic design and responsive controls give you the competitive edge you need to come out on top. Say goodbye to laggy inputs and hello to smooth, seamless gameplay with the GP11 Shooter USB Gamepad.");
+            p14.setAddedDate("2024/3/7");
+            p14.setImg("usbGamepad");
+            p14.setRate(5D);
+            p14.setVotes(64);
+            p14.setSold(100);
+            p14.setStockQuantity(100);
+            p14.setStatus("APPROVED");
+            p14.setColors(java.util.List.of(new com.electronics.product.model.ProductColor(null, "black", "#242424")));
+            productService.saveProduct(p14);
+
+            Product p15 = new Product();
+            p15.setName("Quilted Satin Jacket");
+            p15.setShortName("Satin Jacket");
+            p15.setCategory("clothes");
+            p15.setBrand("No Brand");
+            p15.setPrice(105D);
+            p15.setDiscount(0);
+            p15.setDescription("Elevate your outerwear collection with the Quilted Satin Jacket. Crafted from premium satin fabric and featuring a quilted design, this jacket combines style and functionality with ease. Whether you're braving the elements or hitting the town, its luxurious texture and sleek silhouette make it a versatile addition to any wardrobe. Say goodbye to boring outerwear and hello to effortless style with the Quilted Satin Jacket.");
+            p15.setAddedDate("2024/3/7");
+            p15.setImg("satinJacket");
+            p15.setRate(4.5D);
+            p15.setVotes(55);
+            p15.setSold(100);
+            p15.setStockQuantity(100);
+            p15.setStatus("APPROVED");
+            p15.setColors(java.util.List.of(new com.electronics.product.model.ProductColor(null, "blue gray", "#4a5274"), new com.electronics.product.model.ProductColor(null, "black", "#272429"), new com.electronics.product.model.ProductColor(null, "brown", "#6b6957"), new com.electronics.product.model.ProductColor(null, "dark green", "#203734")));
+            productService.saveProduct(p15);
+
+            System.out.println("Initialized sample products from frontend data.");
         }
     }
 }

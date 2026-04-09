@@ -28,7 +28,7 @@ import { regexPatterns } from "./globalVariables";
 
 export const introductionSliderData = [
   {
-    productName: "Iphone 14 Series",
+    productName: "iPhone 14 Series",
     productImg: productImg1,
     logoImg: appleLogo,
     discountText: "Up to 10% off Voucher",
@@ -448,4 +448,13 @@ export const billingInputsData = [
     id: 7,
     regex: regexPatterns.email,
   },
+];
+export const AVAILABLE_COLORS = [
+  { name: "Black", color: "#000000" },
+  { name: "White", color: "#FFFFFF" },
+  { name: "Red", color: "#DB4444" },
+  { name: "Blue", color: "#1749BB" },
+  { name: "Green", color: "#008000" },
+  { name: "Yellow", color: "#FFFF00" },
+  { name: "Pink", color: "#FF69B4" },
 ];

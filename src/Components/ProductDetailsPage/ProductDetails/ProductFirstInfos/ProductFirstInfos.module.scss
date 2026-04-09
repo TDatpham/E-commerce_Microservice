@@ -51,6 +51,14 @@
   color: var(--green);
 }
 
+.brandText {
+  font-size: .875rem;
+  color: var(--black);
+  strong {
+    color: var(--primary-color, #db4444);
+  }
+}
+
 .price {
   display: block;
   font: 400 1.5rem "Inter", sans-serif;

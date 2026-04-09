@@ -90,7 +90,7 @@ const ProductReviews = ({ productData, onReviewChange }) => {
     }
   };
 
-  const [visibleReviews, setVisibleReviews] = useState(3);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   return (
     <section className={s.reviewsSection} aria-label="Product reviews">
@@ -159,7 +159,7 @@ const ProductReviews = ({ productData, onReviewChange }) => {
           <>
             <div className={s.commentsContainer}>
               <ul className={s.comments}>
-                {reviews.slice(0, visibleReviews).map((r) => (
+                {(isExpanded ? reviews : reviews.slice(0, 3)).map((r) => (
                   <li key={r.id} className={s.commentItem}>
                     <div className={s.commentHeader}>
                       <div className={s.userInfo}>
@@ -185,12 +185,12 @@ const ProductReviews = ({ productData, onReviewChange }) => {
                 ))}
               </ul>
             </div>
-            {visibleReviews < reviews.length && (
+            {reviews.length > 3 && (
               <button
                 className={s.loadMoreBtn}
-                onClick={() => setVisibleReviews(prev => prev + 5)}
+                onClick={() => setIsExpanded(!isExpanded)}
               >
-                {t("detailsPage.loadMore") || "Load More Comments"}
+                {isExpanded ? (t("detailsPage.collapse") || "Collapse") : (t("detailsPage.seeAll") || "See All Comments")}
               </button>
             )}
           </>

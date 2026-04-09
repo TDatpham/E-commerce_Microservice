@@ -18,6 +18,7 @@ const ProductFirstInfos = ({ productData }) => {
     productName: shortName,
     translateMethod: t,
     translateKey: "description",
+    fallbackValue: productData.description,
   });
 
   return (
@@ -32,6 +33,13 @@ const ProductFirstInfos = ({ productData }) => {
         <div className={s.verticalLine} />
 
         <span className={s.greenText}>{t("detailsPage.inStock")}</span>
+
+        {productData.brand && (
+          <>
+            <div className={s.verticalLine} />
+            <span className={s.brandText}>{t("detailsPage.brand")}: <strong>{productData.brand}</strong></span>
+          </>
+        )}
       </div>
 
       <span className={s.price} aria-label={`Price: $${price}`}>

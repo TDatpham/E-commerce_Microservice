@@ -2,11 +2,11 @@ import { useState, useEffect, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { showAlert } from "src/Features/alertsSlice";
 import { productApi, orderApi, authApi, categoryApi } from "src/Services/api";
+import { AVAILABLE_COLORS } from "src/Data/staticData";
 import {
   SalesByCategoryPie,
   SalesByCategoryBar,
-  RevenueByMonthLine,
-  OrdersCountByMonthLine,
+  RevenueByCategoryLine,
 } from "./AdminCharts";
 import s from "./AdminDashboard.module.scss";
 
@@ -28,12 +28,16 @@ const AdminDashboard = () => {
     name: "",
     price: 0,
     category: "",
+    brand: "",
+    colors: [],
     stockQuantity: 0,
     description: "",
     img: "",
+    otherImages: ["", "", ""],
     shortName: "",
     discount: 0,
   });
+
 
   const [orders, setOrders] = useState([]);
   const [statusFilter, setStatusFilter] = useState("ALL");
@@ -119,6 +123,24 @@ const AdminDashboard = () => {
     setCurrentProduct({ ...currentProduct, [name]: value });
   };
 
+  const handleOtherImageChange = (index, value) => {
+    setCurrentProduct((prev) => {
+      const newOtherImages = [...(prev.otherImages || ["", "", ""])];
+      newOtherImages[index] = value;
+      return { ...prev, otherImages: newOtherImages };
+    });
+  };
+
+  const handleColorToggle = (colorObj) => {
+    setCurrentProduct(prev => {
+      const isSelected = (prev.colors || []).some(c => c.name === colorObj.name);
+      const newColors = isSelected
+        ? prev.colors.filter(c => c.name !== colorObj.name)
+        : [...(prev.colors || []), colorObj];
+      return { ...prev, colors: newColors };
+    });
+  };
+
   const handleProductSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -178,7 +200,10 @@ const AdminDashboard = () => {
   };
 
   const handleProductEdit = (product) => {
-    setCurrentProduct(product);
+    const defaultOtherImages = Array.isArray(product.otherImages)
+      ? [...product.otherImages, "", "", ""].slice(0, 3)
+      : ["", "", ""];
+    setCurrentProduct({ ...product, otherImages: defaultOtherImages });
     setIsEditingProduct(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
     setActiveTab(TABS.PRODUCTS);
@@ -214,9 +239,12 @@ const AdminDashboard = () => {
       name: "",
       price: 0,
       category: "",
+      brand: "",
+      colors: [],
       stockQuantity: 0,
       description: "",
       img: "",
+      otherImages: ["", "", ""],
       shortName: "",
       discount: 0,
     });
@@ -423,86 +451,36 @@ const AdminDashboard = () => {
     [products]
   );
 
-  const parseDate = (dateVal) => {
-    if (!dateVal) return new Date();
-    if (Array.isArray(dateVal)) {
-      // LocalDateTime as array [year, month, day, hour, minute]
-      return new Date(dateVal[0], dateVal[1] - 1, dateVal[2], dateVal[3] || 0, dateVal[4] || 0);
-    }
-    return new Date(dateVal);
-  };
 
-  const revenueByMonth = useMemo(() => {
-    const fullYear = {};
-    for (let i = 1; i <= 12; i++) {
-      fullYear[i.toString().padStart(2, "0")] = 0;
-    }
-
-    return orders.reduce((acc, o) => {
-      const date = parseDate(o.orderDate);
-      const month = `${date.getMonth() + 1}`.padStart(2, "0");
-      acc[month] = (acc[month] || 0) + (o.totalAmount || 0);
-      return acc;
-    }, fullYear);
-  }, [orders]);
-
-  const ordersCountByMonth = useMemo(() => {
-    const fullYear = {};
-    for (let i = 1; i <= 12; i++) {
-      fullYear[i.toString().padStart(2, "0")] = 0;
-    }
-
-    return orders.reduce((acc, o) => {
-      const date = parseDate(o.orderDate);
-      const month = `${date.getMonth() + 1}`.padStart(2, "0");
-      acc[month] = (acc[month] || 0) + 1;
-      return acc;
-    }, fullYear);
-  }, [orders]);
 
   const totalRevenue = useMemo(() => orders.reduce((acc, o) => acc + (o.totalAmount || 0), 0), [orders]);
   const totalOrders = orders.length;
   const totalUsers = users.length;
   const totalProducts = products.length;
 
-  const transactionData = useMemo(() => {
-    // Synthesizing daily data for the Transaction chart based on the image
-    const daysInMonth = 10;
-    const data = [];
-    for (let i = 0; i <= daysInMonth; i++) {
-      let dayName = "";
-      if (i === 0) dayName = "January 3, 2026";
-      else if (i === daysInMonth) dayName = "January 10, 2026";
-      
-      data.push({
-        name: dayName,
-        deposit: 6000 - i * 500,
-        withdrawal: 1600 + i * 30,
-        transfer: 2900 + i * 110,
-        credit: 0 + i * 400,
-      });
-    }
-    return data;
-  }, []);
+  // Revenue by product category (totalAmount of orders multiplied by product proportion)
+  const revenueByCategoryData = useMemo(() => {
+    // Calculate estimated revenue by category based on sold products
+    const catRevenue = {};
+    products.forEach((p) => {
+      const cat = p.category || "Unknown";
+      const sold = p.sold || 0;
+      const price = p.price || 0;
+      catRevenue[cat] = (catRevenue[cat] || 0) + sold * price;
+    });
+    return catRevenue;
+  }, [products]);
 
 
   return (
     <div className={s.adminDashboard}>
       <div className="container">
-        <div className={s.header}>
-          <div className={s.logoArea}>
-            <span className={s.logoIcon}>🛠️</span>
-            <h1>Admin Dashboard</h1>
-          </div>
-          <div className={s.headerActions}>
-            <button onClick={fetchAllData} className={s.refreshBtn}>
-              <span className={s.refreshIcon}>🔄</span> Refresh
-            </button>
-          </div>
-        </div>
-
         <div className={s.adminLayout}>
           <aside className={s.sidebar}>
+            <div className={s.logoArea}>
+              <span className={s.logoIcon}>🛠️</span>
+              <h1>Admin Dashboard</h1>
+            </div>
             <button
               type="button"
               className={`${s.tabBtn} ${activeTab === TABS.OVERVIEW ? s.activeTab : ""}`}
@@ -568,7 +546,7 @@ const AdminDashboard = () => {
                 </div>
 
                 <div className={s.chartsGrid}>
-                  {/* 1) Bar Chart */}
+                  {/* Biểu đồ cột: Doanh số theo thể loại */}
                   <div className={s.chartBlock}>
                     <h2>Total sales by categories</h2>
                     {Object.keys(salesByCategory).length ? (
@@ -578,11 +556,10 @@ const AdminDashboard = () => {
                     )}
                   </div>
 
-                  {/* 3) Pie Chart */}
+                  {/* Biểu đồ tròn: Phân phối doanh thu */}
                   <div className={s.chartBlock}>
                     <div className={s.chartHeader}>
                       <h2>Revenue distribution</h2>
-                      <span className={s.chartSubtitle}>01/10/2026</span>
                     </div>
                     {Object.keys(salesByCategory).length ? (
                       <SalesByCategoryPie data={salesByCategory} />
@@ -591,21 +568,13 @@ const AdminDashboard = () => {
                     )}
                   </div>
 
-                  <div className={s.chartBlock}>
-                    <h2>Revenue breakdown (Curve)</h2>
-                    {Object.keys(revenueByMonth).length ? (
-                      <RevenueByMonthLine data={revenueByMonth} />
+                  {/* Biểu đồ đường: Lợi nhuận theo thể loại */}
+                  <div className={`${s.chartBlock} ${s.fullWidth}`}>
+                    <h2>🏷️ Revenue by Product Category</h2>
+                    {Object.keys(revenueByCategoryData).length > 0 ? (
+                      <RevenueByCategoryLine data={revenueByCategoryData} />
                     ) : (
-                      <p className="chartNoData">No orders to calculate revenue.</p>
-                    )}
-                  </div>
-
-                  <div className={s.chartBlock}>
-                    <h2>Orders count by month</h2>
-                    {Object.keys(ordersCountByMonth).length ? (
-                      <OrdersCountByMonthLine data={ordersCountByMonth} />
-                    ) : (
-                      <p className="chartNoData">No orders yet.</p>
+                      <p className="chartNoData">No category revenue data available.</p>
                     )}
                   </div>
                 </div>
@@ -666,14 +635,55 @@ const AdminDashboard = () => {
                         placeholder="Stock Quantity"
                         required
                       />
+                      <input
+                        name="brand"
+                        value={currentProduct.brand}
+                        onChange={handleProductInputChange}
+                        placeholder="Brand (e.g. Apple, Sony)"
+                        required
+                      />
                     </div>
-                    <input
-                      name="img"
-                      value={currentProduct.img}
-                      onChange={handleProductInputChange}
-                      placeholder="Image Filename/URL"
-                      required
-                    />
+                    <div className={s.inputSection}>
+                      <label>Select Available Colors:</label>
+                      <div className={s.colorOptions}>
+                        {AVAILABLE_COLORS.map(c => (
+                          <button
+                            key={c.name}
+                            type="button"
+                            title={c.name}
+                            className={`${s.colorOption} ${(currentProduct.colors || []).some(pc => pc.name === c.name) ? s.selectedColor : ""}`}
+                            style={{ backgroundColor: c.color }}
+                            onClick={() => handleColorToggle(c)}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <div className={s.inputGroup}>
+                      <input
+                        name="img"
+                        value={currentProduct.img}
+                        onChange={handleProductInputChange}
+                        placeholder="Main Image Filename/URL"
+                        required
+                      />
+                      <input
+                        value={(currentProduct.otherImages || ["", "", ""])[0]}
+                        onChange={(e) => handleOtherImageChange(0, e.target.value)}
+                        placeholder="Additional Image 1 Filename/URL"
+                      />
+                    </div>
+                    <div className={s.inputGroup}>
+                      <input
+                        value={(currentProduct.otherImages || ["", "", ""])[1]}
+                        onChange={(e) => handleOtherImageChange(1, e.target.value)}
+                        placeholder="Additional Image 2 Filename/URL"
+                      />
+                      <input
+                        value={(currentProduct.otherImages || ["", "", ""])[2]}
+                        onChange={(e) => handleOtherImageChange(2, e.target.value)}
+                        placeholder="Additional Image 3 Filename/URL"
+                      />
+                    </div>
                     <textarea
                       name="description"
                       value={currentProduct.description}

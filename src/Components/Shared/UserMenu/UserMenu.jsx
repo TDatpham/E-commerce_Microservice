@@ -30,13 +30,6 @@ const UserMenu = ({ isActive, toggler }) => {
         <span>{t("userMenuItems.profile")}</span>
       </NavLink>
 
-      {isUserAdmin(userRole) && (
-        <NavLink to="/admin" aria-label="Admin dashboard">
-          <SvgIcon name="admin" />
-          <span>{t("userMenuItems.admin") || "Admin Dashboard"}</span>
-        </NavLink>
-      )}
-
       {isUserSeller(userRole) && (
         <NavLink to="/seller" aria-label="Seller dashboard">
           <SvgIcon name="cart" />

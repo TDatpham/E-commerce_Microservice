@@ -1,0 +1,101 @@
+services:
+  # 1. Discovery Service (Eureka)
+  - type: web
+    name: discovery-service
+    env: docker
+    dockerContext: backend
+    dockerfilePath: Dockerfile
+    plan: free
+    dockerBuildArgs:
+      SERVICE_NAME: discovery-service
+      PORT: 8761
+    envVars:
+      - key: SERVER_PORT
+        value: 8761
+
+  # 2. API Gateway
+  - type: web
+    name: api-gateway
+    env: docker
+    dockerContext: backend
+    dockerfilePath: Dockerfile
+    plan: free
+    dockerBuildArgs:
+      SERVICE_NAME: api-gateway
+      PORT: 8080
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SERVER_PORT
+        value: 8080
+      - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+        value: http://discovery-service:8761/eureka/
+      - key: ALLOWED_ORIGINS
+        sync: false # Set your Vercel URL here in Render dashboard
+
+  # 3. Product Service
+  - type: web
+    name: product-service
+    env: docker
+    dockerContext: backend
+    dockerfilePath: Dockerfile
+    plan: free
+    dockerBuildArgs:
+      SERVICE_NAME: product-service
+      PORT: 8081
+    envVars:
+      - key: SERVER_PORT
+        value: 8081
+      - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+        value: http://discovery-service:8761/eureka/
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      - key: SPRING_KAFKA_BOOTSTRAP_SERVERS
+        value: kafka:9092
+
+  # 4. User Service
+  - type: web
+    name: user-service
+    env: docker
+    dockerContext: backend
+    dockerfilePath: Dockerfile
+    plan: free
+    dockerBuildArgs:
+      SERVICE_NAME: user-service
+      PORT: 8082
+    envVars:
+      - key: SERVER_PORT
+        value: 8082
+      - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+        value: http://discovery-service:8761/eureka/
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+
+  # 5. Order Service
+  - type: web
+    name: order-service
+    env: docker
+    dockerContext: backend
+    dockerfilePath: Dockerfile
+    plan: free
+    dockerBuildArgs:
+      SERVICE_NAME: order-service
+      PORT: 8083
+    envVars:
+      - key: SERVER_PORT
+        value: 8083
+      - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+        value: http://discovery-service:8761/eureka/
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false

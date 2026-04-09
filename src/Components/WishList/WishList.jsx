@@ -1,5 +1,4 @@
 import { Helmet } from "react-helmet-async";
-import { useTranslation } from "react-i18next";
 import useScrollOnMount from "src/Hooks/App/useScrollOnMount";
 import ForYouSection from "../Shared/Sections/ForYouSection/ForYouSection";
 import s from "./WishList.module.scss";
@@ -7,7 +6,6 @@ import WishProducts from "./WishProducts/WishProducts";
 import WishlistPageHeader from "./WishlistPageHeader/WishlistPageHeader";
 
 const WishList = () => {
-  const { t } = useTranslation();
 
   useScrollOnMount(200);
 

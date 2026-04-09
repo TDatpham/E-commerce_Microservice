@@ -6,6 +6,7 @@ import { orderApi } from "src/Services/api";
 import ConfirmOrderProductBtn from "./ConfirmOrderProductBtn";
 import s from "./OrderProduct.module.scss";
 import RemoveOrderProductBtn from "./RemoveOrderProductBtn";
+import { translateProduct } from "src/Functions/componentsFunctions";
 
 const OrderProduct = ({ data }) => {
   const { img, name, shortName, afterDiscount, quantity, orderId, status } = data;
@@ -36,7 +37,7 @@ const OrderProduct = ({ data }) => {
       );
       // Reload to reflect updated status
       window.location.reload();
-    } catch (err) {
+    } catch (_err) {
       dispatch(
         showAlert({
           alertText: "Không thể cập nhật trạng thái đơn hàng. Vui lòng thử lại.",
@@ -105,19 +106,3 @@ const OrderProduct = ({ data }) => {
   );
 };
 export default OrderProduct;
-
-export function translateProduct({
-  productName,
-  translateMethod,
-  translateKey,
-  uppercase = false,
-  dynamicData = {},
-}) {
-  const shortNameKey = productName?.replaceAll(" ", "");
-  const productTrans = `products.${shortNameKey}`;
-  const translateText = translateMethod(
-    `${productTrans}.${translateKey}`,
-    dynamicData
-  );
-  return uppercase ? translateText.toUpperCase() : translateText;
-}

@@ -126,7 +126,7 @@ const userSlice = createSlice({
 
 /** Save user info to localStorage (WITHOUT tokens - those are stored separately) */
 function saveUserInfoToStorage(info) {
-  const { accessToken, refreshToken, ...safeInfo } = info;
+  const { accessToken: _accessToken, refreshToken: _refreshToken, ...safeInfo } = info;
   localStorage.setItem("userInfo", JSON.stringify({ ...safeInfo, isSignIn: true }));
 }
 

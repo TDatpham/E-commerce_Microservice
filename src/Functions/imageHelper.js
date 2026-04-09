@@ -11,3 +11,8 @@ export const getProductImage = (imageName) => {
   // Try to find it in our imported assets, otherwise use as path/URL
   return ProductImages[imageName] || imageName;
 };
+
+export function setPreviewImg(img, dispatch, updateGlobalState) {
+  const resolved = getProductImage(img);
+  dispatch(updateGlobalState({ key: "previewImg", value: resolved }));
+}

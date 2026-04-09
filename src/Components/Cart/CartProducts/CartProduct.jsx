@@ -5,6 +5,7 @@ import { removeById } from "src/Features/productsSlice";
 import CustomNumberInput from "../../Shared/MiniComponents/CustomNumberInput/CustomNumberInput";
 import s from "./CartProduct.module.scss";
 import RemoveCartProductBtn from "./RemoveCartProductBtn";
+import { translateProduct } from "src/Functions/componentsFunctions";
 
 const CartProduct = ({ data }) => {
   const { img, name, shortName, afterDiscount, quantity, id } = data;
@@ -49,29 +50,3 @@ const CartProduct = ({ data }) => {
   );
 };
 export default CartProduct;
-
-export function translateProduct({
-  productName,
-  translateMethod,
-  translateKey,
-  uppercase = false,
-  dynamicData = {},
-  fallbackValue,
-}) {
-  const shortNameKey = productName?.replaceAll(" ", "");
-  const productTrans = `products.${shortNameKey}`;
-  const key = `${productTrans}.${translateKey}`;
-  let translateText = translateMethod(key, dynamicData);
-
-  if (translateText === key) {
-    if (fallbackValue !== undefined) {
-      translateText = fallbackValue;
-    } else if (translateKey === "shortName" || translateKey === "name") {
-      translateText = productName;
-    } else {
-      translateText = "";
-    }
-  }
-
-  return uppercase ? (translateText?.toUpperCase() || "") : translateText;
-}

@@ -22,7 +22,6 @@ const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState(TABS.OVERVIEW);
 
   const [products, setProducts] = useState([]);
-  const [stats, setStats] = useState([]);
   const [isEditingProduct, setIsEditingProduct] = useState(false);
   const [currentProduct, setCurrentProduct] = useState({
     name: "",
@@ -63,6 +62,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     fetchAllData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchProducts = async () => {
@@ -76,10 +76,9 @@ const AdminDashboard = () => {
 
   const fetchStats = async () => {
     try {
-      const res = await productApi.getStats();
-      setStats(res.data || []);
-    } catch (err) {
-      console.error(err);
+      await productApi.getStats();
+    } catch (_err) {
+      // console.error(_err);
     }
   };
 
@@ -87,8 +86,8 @@ const AdminDashboard = () => {
     try {
       const res = await orderApi.getAll();
       if (res?.data) setOrders(res.data);
-    } catch (err) {
-      console.error(err);
+    } catch (_err) {
+      console.error(_err);
     }
   };
 
@@ -166,7 +165,7 @@ const AdminDashboard = () => {
       fetchProducts();
       fetchStats();
       resetProductForm();
-    } catch (err) {
+    } catch (_err) {
       dispatch(
         showAlert({
           alertText: "Operation failed",
@@ -188,7 +187,7 @@ const AdminDashboard = () => {
         })
       );
       fetchProducts();
-    } catch (err) {
+    } catch (_err) {
       dispatch(
         showAlert({
           alertText: "Failed to update product status",
@@ -222,7 +221,7 @@ const AdminDashboard = () => {
         );
         fetchProducts();
         fetchStats();
-      } catch (err) {
+      } catch (_err) {
         dispatch(
           showAlert({
             alertText: "Delete failed",
@@ -280,7 +279,7 @@ const AdminDashboard = () => {
       setEditingCategory(null);
       setCategoryForm({ id: null, name: "", displayName: "" });
       fetchCategories();
-    } catch (err) {
+    } catch (_err) {
       dispatch(
         showAlert({
           alertText: "Failed to save category",
@@ -313,7 +312,7 @@ const AdminDashboard = () => {
         })
       );
       fetchCategories();
-    } catch (err) {
+    } catch (_err) {
       dispatch(
         showAlert({
           alertText: "Failed to delete category",
@@ -354,7 +353,7 @@ const AdminDashboard = () => {
       );
       setEditingUser(null);
       await fetchUsers();
-    } catch (err) {
+    } catch (_err) {
       dispatch(
         showAlert({
           alertText: "Failed to update user",
@@ -378,7 +377,7 @@ const AdminDashboard = () => {
         })
       );
       await fetchUsers();
-    } catch (err) {
+    } catch (_err) {
       dispatch(
         showAlert({
           alertText: "Failed to delete user",
@@ -400,7 +399,7 @@ const AdminDashboard = () => {
         })
       );
       await fetchOrders();
-    } catch (err) {
+    } catch (_err) {
       dispatch(
         showAlert({
           alertText: "Failed to update order status",
@@ -423,7 +422,7 @@ const AdminDashboard = () => {
           })
         );
         await fetchOrders();
-      } catch (err) {
+      } catch (_err) {
         dispatch(
           showAlert({
             alertText: "Failed to delete order",
@@ -1006,7 +1005,7 @@ const AdminDashboard = () => {
                               <option value="CANCELLED">CANCELLED</option>
                             </select>
                           </td>
-                          <td>{parseDate(o.orderDate).toLocaleDateString()}</td>
+                          <td>{new Date(o.orderDate).toLocaleDateString()}</td>
                           <td>
                             <div className={s.actionBtns}>
                                 <button

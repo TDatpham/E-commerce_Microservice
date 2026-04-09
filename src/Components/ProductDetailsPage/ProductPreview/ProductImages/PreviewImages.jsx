@@ -5,6 +5,7 @@ import { updateGlobalState } from "src/Features/globalSlice";
 import { getProductImage } from "src/Functions/imageHelper";
 import s from "./PreviewImages.module.scss";
 import ProductImages from "./ProductImages";
+import { setPreviewImg } from "src/Functions/imageHelper";
 
 const PreviewImages = ({ productData }) => {
   const dispatch = useDispatch();
@@ -21,6 +22,7 @@ const PreviewImages = ({ productData }) => {
       const firstImg = getProductImage(images[0]);
       dispatch(updateGlobalState({ key: "previewImg", value: firstImg }));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, productData?.id]);
 
   if (images.length === 0) return null;
@@ -41,8 +43,3 @@ const PreviewImages = ({ productData }) => {
 };
 
 export default PreviewImages;
-
-export function setPreviewImg(img, dispatch) {
-  const resolved = getProductImage(img);
-  dispatch(updateGlobalState({ key: "previewImg", value: resolved }));
-}

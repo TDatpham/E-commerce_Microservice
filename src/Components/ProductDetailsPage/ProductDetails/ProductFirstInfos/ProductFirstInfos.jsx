@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { translateProduct } from "../../../Cart/CartProducts/CartProduct";
+import { translateProduct } from "src/Functions/componentsFunctions";
 import RateStars from "../../../Shared/MidComponents/RateStars/RateStars";
 import s from "./ProductFirstInfos.module.scss";
 

@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { translateProduct } from "../../Cart/CartProducts/CartProduct";
+import { translateProduct } from "src/Functions/componentsFunctions";
 import s from "./PaymentProducts.module.scss";
 
 const PaymentProducts = ({ products }) => {

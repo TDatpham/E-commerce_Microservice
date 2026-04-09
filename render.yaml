@@ -2,50 +2,38 @@ services:
   # 1. Discovery Service (Eureka)
   - type: web
     name: discovery-service
-    env: docker
+    runtime: docker
     dockerContext: backend
-    dockerfilePath: Dockerfile
+    dockerfilePath: discovery-service/Dockerfile
     plan: free
     envVars:
-      - key: SERVICE_NAME
-        value: discovery-service
-      - key: PORT
-        value: "8761"
       - key: SERVER_PORT
         value: "8761"
 
   # 2. API Gateway
   - type: web
     name: api-gateway
-    env: docker
+    runtime: docker
     dockerContext: backend
-    dockerfilePath: Dockerfile
+    dockerfilePath: api-gateway/Dockerfile
     plan: free
     healthCheckPath: /actuator/health
     envVars:
-      - key: SERVICE_NAME
-        value: api-gateway
-      - key: PORT
-        value: "8080"
       - key: SERVER_PORT
         value: "8080"
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
         value: http://discovery-service:8761/eureka/
       - key: ALLOWED_ORIGINS
-        sync: false # Set your Vercel URL here in Render dashboard
+        sync: false
 
   # 3. Product Service
   - type: web
     name: product-service
-    env: docker
+    runtime: docker
     dockerContext: backend
-    dockerfilePath: Dockerfile
+    dockerfilePath: product-service/Dockerfile
     plan: free
     envVars:
-      - key: SERVICE_NAME
-        value: product-service
-      - key: PORT
-        value: "8081"
       - key: SERVER_PORT
         value: "8081"
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
@@ -57,20 +45,16 @@ services:
       - key: SPRING_DATASOURCE_PASSWORD
         sync: false
       - key: SPRING_KAFKA_BOOTSTRAP_SERVERS
-        value: kafka:9092
+        value: localhost:9092
 
   # 4. User Service
   - type: web
     name: user-service
-    env: docker
+    runtime: docker
     dockerContext: backend
-    dockerfilePath: Dockerfile
+    dockerfilePath: user-service/Dockerfile
     plan: free
     envVars:
-      - key: SERVICE_NAME
-        value: user-service
-      - key: PORT
-        value: "8082"
       - key: SERVER_PORT
         value: "8082"
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
@@ -85,15 +69,11 @@ services:
   # 5. Order Service
   - type: web
     name: order-service
-    env: docker
+    runtime: docker
     dockerContext: backend
-    dockerfilePath: Dockerfile
+    dockerfilePath: order-service/Dockerfile
     plan: free
     envVars:
-      - key: SERVICE_NAME
-        value: order-service
-      - key: PORT
-        value: "8083"
       - key: SERVER_PORT
         value: "8083"
       - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE

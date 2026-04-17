@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { showAlert } from "src/Features/alertsSlice";
-import { orderApi } from "src/Services/api";
+import { orderApi, default as api } from "src/Services/api";
 import { store } from "src/App/store";
 import { clearCart } from "src/Features/productsSlice";
 import {
@@ -15,11 +15,13 @@ import useScrollOnMount from "src/Hooks/App/useScrollOnMount";
 import useFormData from "src/Hooks/Helper/useFormData";
 import PagesHistory from "../Shared/MiniComponents/PagesHistory/PagesHistory";
 import BillingDetails from "./BillingDetails/BillingDetails";
+import { useState } from "react";
 import s from "./CheckoutPage.module.scss";
 import PaymentSection from "./PaymentSection/PaymentSection";
 
 const CheckoutPage = () => {
   useScrollOnMount(160);
+  const [paymentType, setPaymentType] = useState("bank");
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -62,7 +64,9 @@ const CheckoutPage = () => {
     if (!saveBillingInfoToLocal) localStorage.removeItem("billingInfo");
 
     if (isInputFocused && isCheckboxFocused) return;
-    if (!isFormValid) {
+    
+    // Bypass validation if paying with MoMo (user request for quick testing)
+    if (!isFormValid && paymentType !== "momo") {
       console.log("Form invalid, inputs:", inputs);
       dispatch(showAlert({ alertText: "Please fill in all required fields correctly.", alertState: "warning", alertType: "alert" }));
       return;
@@ -93,6 +97,7 @@ const CheckoutPage = () => {
             : p.afterDiscount;
           return acc + (price * p.quantity);
         }, 0),
+        paymentMethod: paymentType,
         items: cartProducts.map(p => ({
           productId: p.id,
           quantity: p.quantity,
@@ -103,7 +108,16 @@ const CheckoutPage = () => {
       };
 
       dispatch(showAlert({ alertText: "Placing your order...", alertState: "info", alertType: "alert" }));
-      await orderApi.create(orderData);
+      const response = await orderApi.create(orderData);
+      const createdOrder = response.data;
+
+      if (paymentType === "momo") {
+        dispatch(clearCart());
+        dispatch(showAlert({ alertText: "Redirecting to Payment Page...", alertState: "info", alertType: "alert" }));
+        console.log("[BankTransfer] Redirecting to payment page for order:", createdOrder.id);
+        navigate(`/momo-payment/${createdOrder.id}?amount=${orderData.totalAmount}`);
+        return;
+      }
 
       // Clear cart only (orders are per-account and loaded from backend)
       dispatch(clearCart());
@@ -121,6 +135,55 @@ const CheckoutPage = () => {
     } catch (error) {
       console.error("Order failed:", error);
       dispatch(showAlert({ alertText: "Failed to place order. Please try again.", alertState: "error", alertType: "alert" }));
+    }
+  }
+
+  async function handleMomoDirectPayment() {
+    console.log("[MoMo] Direct payment triggered");
+    
+    if (cartProducts.length === 0) {
+      showEmptyCartAlert(dispatch, t);
+      return;
+    }
+
+    try {
+      const { loginInfo } = store.getState().user;
+      if (!loginInfo?.isSignIn || !loginInfo?.id) {
+        dispatch(showAlert({ alertText: t("loginSignUpPage.pleaseSignIn"), alertState: "error", alertType: "alert" }));
+        setTimeout(() => navigate("/login"), 1000);
+        return;
+      }
+
+      setPaymentType("momo");
+      dispatch(showAlert({ alertText: "Quick Checkout (Bank Transfer)...", alertState: "info", alertType: "alert" }));
+
+      const orderData = {
+        userId: loginInfo.id,
+        totalAmount: cartProducts.reduce((acc, p) => {
+          const price = typeof p.afterDiscount === 'string'
+            ? parseFloat(p.afterDiscount.replaceAll(",", ""))
+            : p.afterDiscount;
+          return acc + (price * p.quantity);
+        }, 0),
+        paymentMethod: "Bank Transfer (Shinhan)",
+        items: cartProducts.map(p => ({
+          productId: p.id,
+          quantity: p.quantity,
+          price: typeof p.afterDiscount === 'string'
+            ? parseFloat(p.afterDiscount.replaceAll(",", ""))
+            : p.afterDiscount
+        }))
+      };
+
+      const response = await orderApi.create(orderData);
+      const createdOrder = response.data;
+
+      console.log("[BankTransfer] Redirecting to local payment page for order:", createdOrder.id);
+      dispatch(clearCart());
+      navigate(`/momo-payment/${createdOrder.id}?amount=${orderData.totalAmount}`);
+    } catch (error) {
+      console.error("Direct payment failed:", error);
+      dispatch(showAlert({ alertText: "Checkout failed. Check console.", alertState: "error", alertType: "alert" }));
     }
   }
 
@@ -144,7 +207,11 @@ const CheckoutPage = () => {
             onSubmit={handleSubmitPayment}
           >
             <BillingDetails inputsData={{ billingValues, handleChange }} />
-            <PaymentSection />
+            <PaymentSection 
+              paymentType={paymentType} 
+              setPaymentType={setPaymentType} 
+              onMomoDirect={handleMomoDirectPayment}
+            />
           </form>
         </main>
       </div>

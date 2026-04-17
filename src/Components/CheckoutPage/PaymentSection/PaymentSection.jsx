@@ -6,7 +6,7 @@ import PaymentOptionsSelection from "./PaymentOptionsSelection";
 import PaymentProducts from "./PaymentProducts";
 import s from "./PaymentSection.module.scss";
 
-const PaymentSection = () => {
+const PaymentSection = ({ paymentType, setPaymentType, onMomoDirect }) => {
   const { cartProducts } = useSelector((state) => state.products);
   const { t } = useTranslation();
 
@@ -14,7 +14,11 @@ const PaymentSection = () => {
     <section className={s.paymentSection}>
       <PaymentProducts products={cartProducts} />
       <PaymentCalculation />
-      <PaymentOptionsSelection />
+      <PaymentOptionsSelection 
+        paymentType={paymentType} 
+        setPaymentType={setPaymentType} 
+        onMomoDirect={onMomoDirect} 
+      />
       <AddCoupon />
 
       <button type="submit" className={s.submitPaymentButton}>

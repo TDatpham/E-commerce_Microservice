@@ -65,6 +65,10 @@ public class OrderService {
         System.out.println("[OrderService] Stock reduction response: " + response.getStatusCode());
     }
 
+    public java.util.Optional<Order> getOrderById(Long id) {
+        return orderRepository.findById(id);
+    }
+
     public List<Order> getOrdersByUserId(Long userId) {
         return orderRepository.findByUserId(userId);
     }

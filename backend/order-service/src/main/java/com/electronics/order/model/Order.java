@@ -20,6 +20,7 @@ public class Order {
     private Long userId;
     private Double totalAmount;
     private String status;
+    private String paymentMethod;
     private LocalDateTime orderDate;
 
     @OneToMany(cascade = CascadeType.ALL)

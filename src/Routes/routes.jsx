@@ -16,6 +16,7 @@ import SignUp from "../Components/SignUp/SignUp";
 import WishList from "../Components/WishList/WishList";
 import AdminDashboard from "../Components/Admin/AdminDashboard";
 import SellerDashboard from "../Components/Seller/SellerDashboard";
+import MomoPaymentPage from "../Components/MomoPaymentPage/MomoPaymentPage";
 
 export const ROUTES_CONFIG = [
   { path: "/", element: <Home /> },
@@ -29,6 +30,7 @@ export const ROUTES_CONFIG = [
   { path: "/cart", element: <Cart /> },
   { path: "/checkout", element: <CheckoutPage /> },
   { path: "/order", element: <OrderPage /> },
+  { path: "/momo-payment/:orderId", element: <MomoPaymentPage /> },
   { path: "/signup", element: <SignUp /> },
   { path: "/login", element: <LogIn /> },
   { path: "/profile", element: <AccountPage /> },

@@ -1,0 +1,270 @@
+.container {
+  min-height: 100vh;
+  background: radial-gradient(circle at top left, #f8faff 0%, #e2e8f0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  font-family: 'Inter', sans-serif;
+}
+
+.paymentCard {
+  background: white;
+  width: 100%;
+  max-width: 1200px; /* 3x current size approximately in feel */
+  height: fit-content;
+  border-radius: 40px;
+  box-shadow: 0 50px 100px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.header {
+  padding: 24px 50px;
+  border-bottom: 2px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.03em;
+  }
+
+  .statusBadge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0369a1;
+    background: #f0f9ff;
+    padding: 10px 24px;
+    border-radius: 100px;
+    text-transform: uppercase;
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      background: #0369a1;
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+  }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.8); opacity: 0.4; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.content {
+  padding: 60px;
+  display: flex;
+  flex-direction: row;
+  gap: 80px;
+  align-items: center;
+
+  @media (max-width: 1000px) {
+    flex-direction: column;
+    padding: 40px;
+  }
+}
+
+.qrSection {
+  padding-right: 50px;
+  border-right: 2px solid #f1f5f9;
+
+  @media (max-width: 1000px) {
+    border-right: none;
+    padding-right: 0;
+    padding-bottom: 40px;
+    border-bottom: 2px solid #f1f5f9;
+  }
+
+  .qrContainer {
+    padding: 20px;
+    background: white;
+    border-radius: 30px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+    border: 2px solid #f1f5f9;
+    position: relative;
+    overflow: hidden;
+
+    img {
+      display: block;
+      width: 500px;
+      height: auto;
+    }
+
+    // White overlay to hide the amount text at the very bottom of the VietQR image
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 62px;
+      background: white;
+    }
+  }
+}
+
+.detailsSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.infoGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.orderItems {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  label {
+    font-size: 0.95rem;
+    color: #94a3b8;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .itemList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 250px;
+    overflow-y: auto;
+    padding-right: 15px;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #e2e8f0;
+      border-radius: 10px;
+    }
+  }
+
+  .itemRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: #f8fafc;
+    border-radius: 15px;
+    border: 1px solid #f1f5f9;
+
+    .itemName {
+      font-weight: 600;
+      color: #334155;
+      font-size: 1.1rem;
+    }
+
+    .itemPrice {
+      font-weight: 700;
+      color: #004691;
+      font-size: 1.1rem;
+    }
+  }
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-size: 0.95rem;
+    color: #94a3b8;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .value {
+    font-size: 1.35rem;
+    color: #1e293b;
+    font-weight: 600;
+  }
+
+  &.amountItem {
+    .value {
+      font-size: 3rem;
+      color: #004691;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+  }
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 15px;
+
+  button {
+    width: 100%;
+    padding: 22px;
+    border-radius: 20px;
+    font-size: 1.3rem;
+    font-weight: 800;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .primaryBtn {
+    background: #004691;
+    color: white;
+    border: none;
+    box-shadow: 0 15px 35px rgba(0, 70, 145, 0.3);
+    &:hover { 
+      background: #00336a;
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 20px 45px rgba(0, 70, 145, 0.4);
+    }
+  }
+
+  .secondaryBtn {
+    background: transparent;
+    color: #94a3b8;
+    border: 2px solid #e2e8f0;
+    &:hover { 
+      color: #64748b; 
+      background: #f8fafc;
+      transform: scale(1.01);
+    }
+  }
+}
+
+.timer {
+  font-size: 1.5rem;
+  color: #94a3b8;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 20px;
+  span {
+    color: #0f172a;
+    font-weight: 900;
+  }
+}

@@ -91,6 +91,7 @@ export const authApi = {
 
 export const orderApi = {
   create: (orderData) => api.post('/orders', orderData),
+  getById: (id) => api.get(`/orders/${id}`),
   getByUser: (userId) => api.get(`/orders/user/${userId}`),
   getAll: () => api.get('/orders'),
   updateStatus: (id, status) => api.put(`/orders/${id}/status`, null, { params: { status } }),

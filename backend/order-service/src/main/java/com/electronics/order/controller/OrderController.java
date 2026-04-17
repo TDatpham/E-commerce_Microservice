@@ -19,6 +19,13 @@ public class OrderController {
         return ResponseEntity.ok(orderService.createOrder(order));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Order> getOrderById(@PathVariable Long id) {
+        return orderService.getOrderById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @GetMapping("/user/{userId}")
     public List<Order> getOrdersByUser(@PathVariable Long userId) {
         return orderService.getOrdersByUserId(userId);

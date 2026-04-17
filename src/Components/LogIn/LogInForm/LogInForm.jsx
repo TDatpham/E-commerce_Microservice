@@ -270,7 +270,26 @@ const LogInForm = () => {
           </div>
         )}
 
-        {/* Google Login — always visible */}
+        {/* Development/Testing Bypass */}
+        <div style={{ marginTop: '20px', borderTop: '1px solid #ccc', paddingTop: '10px' }}>
+          <button 
+            type="button" 
+            style={{ width: '100%', padding: '10px', backgroundColor: '#f0f0f0', border: '1px dashed #555', cursor: 'pointer' }}
+            onClick={() => {
+              const testData = {
+                accessToken: "dummy-token",
+                refreshToken: "dummy-refresh",
+                user: { id: 1, username: "testuser", email: "testuser@example.com", fullName: "Test User", role: "USER" }
+              };
+              dispatch(setLoginData(testData));
+              dispatch(showAlert({ alertText: "Logged in as Test User!", alertState: "success", alertType: "alert" }));
+              setTimeout(() => navigate("/"), 500);
+            }}
+          >
+            DEBUG: Quick Test Login
+          </button>
+        </div>
+
         <div className={s.googleBtnContainer}>
           <GoogleLogin
             onSuccess={handleGoogleSuccess}
